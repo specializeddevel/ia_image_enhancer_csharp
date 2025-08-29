@@ -135,7 +135,13 @@ public class ImageProcessorService
                     FolderProgress = (double)processedFilesInFolder / filesInCurrentFolder,
                     CurrentFilePath = file.FullName,
                     CurrentFolderName = new DirectoryInfo(directoryName).Name,
-                    FilesInCurrentFolder = filesInCurrentFolder
+                    FilesInCurrentFolder = filesInCurrentFolder,
+                    TotalOriginalSize = totalSize.originalSize,
+                    TotalConvertedSize = totalSize.convertedSize,
+                    TotalSpaceSaving = (totalSize.originalSize > 0) ? (1.0 - ((double)totalSize.convertedSize / totalSize.originalSize)) : null,
+                    FolderOriginalSize = folderSizes[directoryName].originalSize,
+                    FolderConvertedSize = folderSizes[directoryName].convertedSize,
+                    FolderSpaceSaving = (folderSizes[directoryName].originalSize > 0) ? (1.0 - ((double)folderSizes[directoryName].convertedSize / folderSizes[directoryName].originalSize)) : null
                 };
                 progress.Report(startingUpdate);
 

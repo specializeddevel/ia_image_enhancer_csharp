@@ -228,16 +228,11 @@ public partial class MainWindowViewModel : ObservableObject
             StatusMessage = update.Message;
             ProgressBarValue = update.OverallProgress * 100;
             FolderProgressBarValue = update.FolderProgress * 100;
-            if (update.FolderSpaceSaving.HasValue)
-            {
-                FolderSpaceSaving = update.FolderSpaceSaving;
-                FolderOriginalSize = update.FolderOriginalSize;
-                FolderConvertedSize = update.FolderConvertedSize;
-                TotalSpaceSaving = update.TotalSpaceSaving;
-                TotalOriginalSize = update.TotalOriginalSize;
-                TotalConvertedSize = update.TotalConvertedSize;
-               
-            }
+
+            FolderSpaceSaving = update.FolderSpaceSaving;
+            FolderOriginalSize = update.FolderOriginalSize;
+            FolderConvertedSize = update.FolderConvertedSize;
+            TotalSpaceSaving = update.TotalSpaceSaving;
             TotalOriginalSize = update.TotalOriginalSize;
             TotalConvertedSize = update.TotalConvertedSize;
 
@@ -394,15 +389,20 @@ public partial class MainWindowViewModel : ObservableObject
     {
         get
         {
-            if (FolderOriginalSize == 0 || FolderConvertedSize == 0)
+            if (FolderOriginalSize == 0)
                 return string.Empty;
 
-            double savedBytes = FolderOriginalSize - FolderConvertedSize;
-            if (savedBytes <= 0)
-                return string.Empty;
-
+            double savedBytes = (double)FolderOriginalSize - FolderConvertedSize;
             double savedMB = savedBytes / (1024.0 * 1024.0);
-            return $"({savedMB:F2} MB saved)";
+
+            if (savedMB >= 0)
+            {
+                return $"({savedMB:F2} MB saved)";
+            }
+            else
+            {
+                return $"({-savedMB:F2} MB added)";
+            }
         }
     }
 
@@ -410,15 +410,37 @@ public partial class MainWindowViewModel : ObservableObject
     {
         get
         {
-            if (TotalOriginalSize == 0 || TotalConvertedSize == 0)
+            if (TotalOriginalSize == 0)
                 return string.Empty;
 
-            double TotalSavedBytes = TotalOriginalSize - TotalConvertedSize;
-            if (TotalSavedBytes <= 0)
+            double savedBytes = (double)TotalOriginalSize - TotalConvertedSize;
+            double savedMB = savedBytes / (1024.0 * 1024.0);
+
+            if (savedMB >= 0)
+            {
+                return $"({savedMB:F2} MB saved)";
+            }
+            else
+            {
+                return $"({-savedMB:F2} MB added)";
+            }
+        }
+    }
+
+    public string TotalSpaceSavingSummary
+    {
+        get
+        {
+            if (!TotalSpaceSaving.HasValue || TotalSpaceSaving.Value <= 0)
                 return string.Empty;
 
-            double TotalSavedMB = TotalSavedBytes / (1024.0 * 1024.0);
-            return $"({TotalSavedMB:F2} MB saved)";
+            string percentage = $"{TotalSpaceSaving.Value:P2}";
+            string mbSaved = TotalSpaceSavingInMB;
+
+            if (string.IsNullOrEmpty(mbSaved))
+                return percentage;
+
+            return $"{percentage} {mbSaved}";
         }
     }
 
@@ -435,13 +457,18 @@ public partial class MainWindowViewModel : ObservableObject
     partial void OnTotalOriginalSizeChanged(long value)
     {
         OnPropertyChanged(nameof(TotalSpaceSavingInMB));
-        OnPropertyChanged(nameof(TotalSpaceSavingInMB));
+        OnPropertyChanged(nameof(TotalSpaceSavingSummary));
     }
 
     partial void OnTotalConvertedSizeChanged(long value)
     {
         OnPropertyChanged(nameof(TotalSpaceSavingInMB));
-        OnPropertyChanged(nameof(TotalSpaceSavingInMB));
+        OnPropertyChanged(nameof(TotalSpaceSavingSummary));
+    }
+
+    partial void OnTotalSpaceSavingChanged(double? value)
+    {
+        OnPropertyChanged(nameof(TotalSpaceSavingSummary));
     }
 
         [RelayCommand]
