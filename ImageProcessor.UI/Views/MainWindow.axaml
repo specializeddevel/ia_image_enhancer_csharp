@@ -1,0 +1,166 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:ImageProcessor.UI.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="600"
+        x:Class="ImageProcessor.UI.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        WindowStartupLocation="CenterScreen"
+        Title="Image Enhancer AI (.NET Edition)"
+        Width="900" Height="750" MinWidth="900" MinHeight="750">
+
+    <Design.DataContext>
+        <vm:MainWindowViewModel/>
+    </Design.DataContext>
+
+    <Window.Styles>
+        <Style Selector="TextBlock.h1">
+            <Setter Property="FontSize" Value="24"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+        </Style>
+        <Style Selector="TextBlock.label">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+        <Style Selector="Button.browse">
+            <Setter Property="MinWidth" Value="80"/>
+        </Style>
+        <Style Selector="WrapPanel > CheckBox">
+            <Setter Property="Margin" Value="0,0,10,5"/>
+        </Style>
+    </Window.Styles>
+
+    <Grid RowDefinitions="Auto,*" Margin="15">
+
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="5" HorizontalAlignment="Right">
+            <TextBlock Text="Light" VerticalAlignment="Center"/>
+            <ToggleSwitch IsChecked="{Binding IsDarkMode}" />
+            <TextBlock Text="Dark" VerticalAlignment="Center"/>
+        </StackPanel>
+        
+        <SplitView Grid.Row="1" 
+                   IsPaneOpen="{Binding ShowPreview}"
+                   PanePlacement="Right"
+                   DisplayMode="Inline">
+            <SplitView.Content>
+                <!-- Left Panel: Controls -->
+                <StackPanel Spacing="10" Margin="0,0,10,0" MinWidth="480">
+                    
+                    <TextBlock Text="Image Enhancer AI" Classes="h1" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+
+                    <Border Background="#40FF0000" BorderBrush="Red" BorderThickness="1" CornerRadius="3" Padding="10" Margin="0,0,0,10"
+                            IsVisible="{Binding ErrorMessage, Converter={x:Static ObjectConverters.IsNotNull}}">
+                        <TextBlock Text="{Binding ErrorMessage}" TextWrapping="Wrap" Foreground="White"/>
+                    </Border>
+
+                    <Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto" ColumnSpacing="10" RowSpacing="10" IsEnabled="{Binding IsUiEnabled}">
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Input Folder:" Classes="label"/>
+                        <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding InputFolder}" IsReadOnly="True"/>
+                        <Button Grid.Row="0" Grid.Column="2" Content="Browse..." Classes="browse" Command="{Binding BrowseInputFolderCommand}" CommandParameter="{Binding $parent[Window]}"/>
+
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Output Folder:" Classes="label"/>
+                        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding OutputFolder}" IsReadOnly="True"/>
+                        <Button Grid.Row="1" Grid.Column="2" Content="Browse..." Classes="browse" Command="{Binding BrowseOutputFolderCommand}" CommandParameter="{Binding $parent[Window]}"/>
+                    </Grid>
+
+                    <Separator Margin="0,5"/>
+
+                    <StackPanel Orientation="Horizontal" Spacing="10" IsEnabled="{Binding IsUiEnabled}">
+                        <TextBlock Text="AI Model:" Classes="label"/>
+                        <ComboBox ItemsSource="{Binding Models}" SelectedItem="{Binding SelectedModel}" MinWidth="200"/>
+                    </StackPanel>
+
+                    <Separator Margin="0,5"/>
+
+                    <TextBlock Text="Processing Options" FontWeight="Bold" IsEnabled="{Binding IsUiEnabled}"/>
+                    <CheckBox Content="Show Preview" IsChecked="{Binding ShowPreview}"/>
+                    <WrapPanel Orientation="Horizontal" IsEnabled="{Binding IsUiEnabled}">
+                        <CheckBox Content="Apply 4x Upscale" IsChecked="{Binding ApplyUpscale}"/>
+                        <CheckBox Content="Convert to .WebP" IsChecked="{Binding ConvertToWebP}"/>
+                        <CheckBox Content="Convert to .AVIF" IsChecked="{Binding ConvertToAvif}"/>
+                        <CheckBox Content="Process Subfolders" IsChecked="{Binding ProcessSubfolders}"/>
+                        <CheckBox Content="Include .WebP Files" IsChecked="{Binding IncludeWebPFiles}"/>
+                        <CheckBox Content="Include .Avif Files" IsChecked="{Binding IncludeAvifFiles}"/>
+                        <CheckBox Content="Delete Source Files" IsChecked="{Binding DeleteSourceFile}" Foreground="Red"/>
+                    </WrapPanel>
+
+                    <Separator Margin="0,10"/>
+
+                    <TextBlock Text="Status" FontWeight="Bold"/>
+
+                  <Grid ColumnDefinitions="*,Auto,Auto,Auto" IsVisible="{Binding IsProcessing}" VerticalAlignment="Center">
+                    <ProgressBar Grid.Column="0" Value="{Binding ProgressBarValue}" Minimum="0" Maximum="100"/>
+                    <TextBlock Grid.Column="1" IsVisible="{Binding TotalSpaceSaving.HasValue}"
+                                   Text="{Binding TotalSpaceSaving, StringFormat='Saved: {0:P1}'}"
+                                   VerticalAlignment="Center" Margin="0,0,5,0"/>
+                    <TextBlock Grid.Column="2" IsVisible="{Binding TotalSpaceSaving.HasValue}"
+                               Text="{Binding TotalSpaceSavingInMB}"
+                               VerticalAlignment="Center" Margin="0,0,5,0"/>
+                    
+                  </Grid>
+                    
+
+                    <Grid ColumnDefinitions="*,Auto,Auto" IsVisible="{Binding IsProcessing}" VerticalAlignment="Center">
+                        <ProgressBar Grid.Column="0" Value="{Binding FolderProgressBarValue}" Minimum="0" Maximum="100" Margin="0,2,5,0"/>
+                        <TextBlock Grid.Column="1" IsVisible="{Binding FolderSpaceSaving.HasValue}"
+                                   Text="{Binding FolderSpaceSaving, StringFormat='Saved: {0:P1}'}"
+                                   VerticalAlignment="Center" Margin="0,0,5,0"/>
+                        <TextBlock Grid.Column="2" IsVisible="{Binding FolderSpaceSaving.HasValue}"
+                                   Text="{Binding FolderSpaceSavingInMB}"
+                                   VerticalAlignment="Center"/>
+                    </Grid>
+
+                    <StackPanel Orientation="Horizontal" Spacing="10" Margin="0,5,0,0" IsVisible="{Binding IsProcessing}" HorizontalAlignment="Center">
+                        <Button Content="Open Input Folder" Command="{Binding OpenInputFolderCommand}"/>
+                        <Button Content="Open Output Folder" Command="{Binding OpenOutputFolderCommand}"/>
+                    </StackPanel>
+
+                    <Grid ColumnDefinitions="Auto,*,Auto" IsVisible="{Binding IsProcessing}">
+                        <TextBlock Grid.Column="0" Text="Folder: " FontWeight="Bold"/>
+                        <TextBlock Grid.Column="1" Text="{Binding CurrentFolderName}" HorizontalAlignment="Left" TextTrimming="CharacterEllipsis"/>
+                        <TextBlock Grid.Column="2" Text="{Binding FilesInCurrentFolder, StringFormat=({0} files)}" HorizontalAlignment="Right"/>
+                    </Grid>
+
+                    <TextBlock Text="{Binding StatusMessage}" TextWrapping="Wrap" Height="40"/>
+                    
+                    <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10" RowSpacing="10">
+                        <Button Grid.Column="0" Content="Start Processing" Command="{Binding StartProcessingCommand}" IsEnabled="{Binding StartProcessingCommand.CanExecute}" HorizontalAlignment="Stretch" Classes="Accent"/>
+                        <Button Grid.Column="1" Content="Cancel" Command="{Binding CancelProcessingCommand}" IsEnabled="{Binding CancelProcessingCommand.CanExecute}" HorizontalAlignment="Stretch"/>
+                        <Button Grid.Column="2" Content="View Log" Command="{Binding ViewLogCommand}" CommandParameter="{Binding $parent[Window]}" HorizontalAlignment="Stretch" IsEnabled="{Binding IsUiEnabled}"/>
+                    </Grid>
+                    <Button Name="ExitButton" Content="Exit" HorizontalAlignment="Stretch" IsEnabled="{Binding IsUiEnabled}" HorizontalContentAlignment="Center"/>
+                </StackPanel>
+            </SplitView.Content>
+            <SplitView.Pane>
+                <!-- Right Panel: Preview -->
+                <Border BorderBrush="Gray" BorderThickness="1,0,0,0" Padding="10,0,0,0" Margin="5,0,0,0"
+                        MinWidth="400">
+                    <Image Source="{Binding ImagePreview}" Stretch="Uniform"/>
+                </Border>
+            </SplitView.Pane>
+        </SplitView>
+
+        <!-- Confirmation Dialog -->
+        <Grid Grid.Row="0" Grid.RowSpan="2" 
+              IsVisible="{Binding IsDeleteConfirmationVisible}"
+              Background="#80000000"> 
+            <Border VerticalAlignment="Center" HorizontalAlignment="Center"
+                    Background="{DynamicResource SystemControlPageBackgroundAltHighBrush}"
+                    BorderBrush="{DynamicResource SystemControlForegroundBaseMediumLowBrush}"
+                    BorderThickness="1" CornerRadius="5" Padding="20" MinWidth="300">
+                <StackPanel Spacing="10">
+                    <TextBlock Text="Confirm Deletion" FontWeight="Bold" FontSize="16"/>
+                    <TextBlock Text="Are you sure you want to permanently delete the original source files? This action cannot be undone."
+                               TextWrapping="Wrap"/>
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="10" Margin="0,10,0,0">
+                        <Button Grid.Column="0" Content="Yes, Delete"
+                                Command="{Binding ConfirmDeleteAndStartCommand}"
+                                Classes="Accent"/>
+                        <Button Grid.Column="1" Content="No, Cancel"
+                                Command="{Binding CancelDeleteCommand}"/>
+                    </Grid>
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Grid>
+</Window>
