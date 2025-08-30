@@ -76,6 +76,29 @@ public partial class LogViewModel : ViewModelBase
     {
         window.Close();
     }
+
+    [ObservableProperty]
+    private bool _isClearConfirmationVisible;
+
+    [RelayCommand]
+    private void RequestClearLog()
+    {
+        IsClearConfirmationVisible = true;
+    }
+
+    [RelayCommand]
+    private void ConfirmClearLog()
+    {
+        _logService.ClearLog();
+        DailyLogs.Clear();
+        IsClearConfirmationVisible = false;
+    }
+
+    [RelayCommand]
+    private void CancelClearLog()
+    {
+        IsClearConfirmationVisible = false;
+    }
 }
 
 public partial class DailyLog : ViewModelBase

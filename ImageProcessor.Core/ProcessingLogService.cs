@@ -57,4 +57,12 @@ public class ProcessingLogService
             }
         }).Where(entry => entry != null)!;
     }
+
+    public void ClearLog()
+    {
+        if (File.Exists(_logFilePath))
+        {
+            File.Delete(_logFilePath);
+        }
+    }
 }

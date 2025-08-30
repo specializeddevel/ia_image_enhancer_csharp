@@ -397,11 +397,11 @@ public partial class MainWindowViewModel : ObservableObject
 
             if (savedMB >= 0)
             {
-                return $"({savedMB:F2} MB saved)";
+                return $"({savedMB:F2} MB) saved";
             }
             else
             {
-                return $"({-savedMB:F2} MB added)";
+                return $"({-savedMB:F2} MB) ADDED";
             }
         }
     }
@@ -418,11 +418,11 @@ public partial class MainWindowViewModel : ObservableObject
 
             if (savedMB >= 0)
             {
-                return $"({savedMB:F2} MB saved)";
+                return $"({savedMB:F2} MB) saved";
             }
             else
             {
-                return $"({-savedMB:F2} MB added)";
+                return $"({-savedMB:F2} MB) ADDED)";
             }
         }
     }

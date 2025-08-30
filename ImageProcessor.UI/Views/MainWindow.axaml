@@ -15,6 +15,9 @@
     </Design.DataContext>
 
     <Window.Styles>
+      <Style Selector="TextBlock.Monospace">
+        <Setter Property="FontFamily" Value="Cascadia Mono, Consolas, monospace"/>
+      </Style>
         <Style Selector="TextBlock.h1">
             <Setter Property="FontSize" Value="24"/>
             <Setter Property="FontWeight" Value="Bold"/>
@@ -33,9 +36,8 @@
     <Grid RowDefinitions="Auto,*" Margin="15">
 
         <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="5" HorizontalAlignment="Right">
-            <TextBlock Text="Light" VerticalAlignment="Center"/>
-            <ToggleSwitch IsChecked="{Binding IsDarkMode}" />
-            <TextBlock Text="Dark" VerticalAlignment="Center"/>
+            <TextBlock Text="Dark Theme" VerticalAlignment="Center"/>
+            <ToggleSwitch IsChecked="{Binding IsDarkMode}" />            
         </StackPanel>
         
         <SplitView Grid.Row="1" 
@@ -46,7 +48,7 @@
                 <!-- Left Panel: Controls -->
                 <StackPanel Spacing="10" Margin="0,0,10,0" MinWidth="480">
                     
-                    <TextBlock Text="Image Enhancer AI" Classes="h1" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+                    <TextBlock Text="AI-Powered Batch Image Enhancement" Classes="h1" HorizontalAlignment="Center" Margin="0,0,0,10"/>
 
                     <Border Background="#40FF0000" BorderBrush="Red" BorderThickness="1" CornerRadius="3" Padding="10" Margin="0,0,0,10"
                             IsVisible="{Binding ErrorMessage, Converter={x:Static ObjectConverters.IsNotNull}}">
@@ -89,32 +91,28 @@
                     <TextBlock Text="Status" FontWeight="Bold"/>
 
                   <Grid ColumnDefinitions="*,Auto,Auto,Auto" IsVisible="{Binding IsProcessing}" VerticalAlignment="Center">
-                    <ProgressBar Grid.Column="0" Value="{Binding ProgressBarValue}" Minimum="0" Maximum="100"/>
+                    <ProgressBar Grid.Column="0" Value="{Binding ProgressBarValue}" Minimum="0" Maximum="100" ShowProgressText="True" Margin="0 1" Height="20"/>
                     <TextBlock Grid.Column="1" IsVisible="{Binding TotalSpaceSaving.HasValue}"
-                                   Text="{Binding TotalSpaceSaving, StringFormat='Saved: {0:P1}'}"
-                                   VerticalAlignment="Center" Margin="0,0,5,0"/>
+                                   Text="{Binding TotalSpaceSaving, StringFormat=' {0:P1}'}"
+                                   VerticalAlignment="Center" Margin="0,0,5,2" Classes="Monospace"/>
                     <TextBlock Grid.Column="2" IsVisible="{Binding TotalSpaceSaving.HasValue}"
                                Text="{Binding TotalSpaceSavingInMB}"
-                               VerticalAlignment="Center" Margin="0,0,5,0"/>
+                               VerticalAlignment="Center" Margin="0,0,5,0" Classes="Monospace"/>
                     
                   </Grid>
                     
 
-                    <Grid ColumnDefinitions="*,Auto,Auto" IsVisible="{Binding IsProcessing}" VerticalAlignment="Center">
-                        <ProgressBar Grid.Column="0" Value="{Binding FolderProgressBarValue}" Minimum="0" Maximum="100" Margin="0,2,5,0"/>
+                    <Grid ColumnDefinitions="*,Auto,Auto,Auto" IsVisible="{Binding IsProcessing}" VerticalAlignment="Center">
+                        <ProgressBar Grid.Column="0" Value="{Binding FolderProgressBarValue}" Minimum="0" Maximum="100" ShowProgressText="True" Margin="0 1" Height="20"/>
                         <TextBlock Grid.Column="1" IsVisible="{Binding FolderSpaceSaving.HasValue}"
-                                   Text="{Binding FolderSpaceSaving, StringFormat='Saved: {0:P1}'}"
-                                   VerticalAlignment="Center" Margin="0,0,5,0"/>
+                                   Text="{Binding FolderSpaceSaving, StringFormat=' {0:P1}'}"
+                                   VerticalAlignment="Center" Margin="0,0,5,2" Classes="Monospace"/>
                         <TextBlock Grid.Column="2" IsVisible="{Binding FolderSpaceSaving.HasValue}"
                                    Text="{Binding FolderSpaceSavingInMB}"
-                                   VerticalAlignment="Center"/>
+                                   VerticalAlignment="Center" Margin="0,0,5,0" Classes="Monospace"/>
                     </Grid>
 
-                    <StackPanel Orientation="Horizontal" Spacing="10" Margin="0,5,0,0" IsVisible="{Binding IsProcessing}" HorizontalAlignment="Center">
-                        <Button Content="Open Input Folder" Command="{Binding OpenInputFolderCommand}"/>
-                        <Button Content="Open Output Folder" Command="{Binding OpenOutputFolderCommand}"/>
-                    </StackPanel>
-
+                    
                     <Grid ColumnDefinitions="Auto,*,Auto" IsVisible="{Binding IsProcessing}">
                         <TextBlock Grid.Column="0" Text="Folder: " FontWeight="Bold"/>
                         <TextBlock Grid.Column="1" Text="{Binding CurrentFolderName}" HorizontalAlignment="Left" TextTrimming="CharacterEllipsis"/>
@@ -122,6 +120,11 @@
                     </Grid>
 
                     <TextBlock Text="{Binding StatusMessage}" TextWrapping="Wrap" Height="40"/>
+
+                  <StackPanel Orientation="Horizontal" Spacing="10" Margin="0,5,0,0" IsVisible="{Binding IsProcessing}" HorizontalAlignment="Center">
+                    <Button Content="Open Input Folder" Command="{Binding OpenInputFolderCommand}"/>
+                    <Button Content="Open Output Folder" Command="{Binding OpenOutputFolderCommand}"/>
+                  </StackPanel>
                     
                     <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10" RowSpacing="10">
                         <Button Grid.Column="0" Content="Start Processing" Command="{Binding StartProcessingCommand}" IsEnabled="{Binding StartProcessingCommand.CanExecute}" HorizontalAlignment="Stretch" Classes="Accent"/>
