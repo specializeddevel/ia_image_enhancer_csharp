@@ -401,7 +401,7 @@ public partial class MainWindowViewModel : ObservableObject
             }
             else
             {
-                return $"({-savedMB:F2} MB) ADDED";
+                return $"({-savedMB:F2} MB) +Added+";
             }
         }
     }
@@ -422,7 +422,7 @@ public partial class MainWindowViewModel : ObservableObject
             }
             else
             {
-                return $"({-savedMB:F2} MB) ADDED)";
+                return $"({-savedMB:F2} MB) +Added+";
             }
         }
     }

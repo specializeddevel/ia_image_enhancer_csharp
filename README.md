@@ -5,7 +5,7 @@
   <img src="https://img.shields.io/badge/UI-Avalonia-purple" alt="Avalonia UI" />
   <img src="https://img.shields.io/badge/API-ASP.NET%20Core-blueviolet" alt="ASP.NET Core" />
   <img src="https://img.shields.io/badge/platform-windows%20%7C%20macos%20%7C%20linux-lightgrey.svg" alt="Platforms" />
-  <a href="https://github.com/raulb/ia_image_enhancer_csharp/blob/main/LICENSE.md">
+  <a href="https://github.com/specializeddevel/ia_image_enhancer_csharp/blob/main/LICENSE.md">
     <img src="https://img.shields.io/github/license/raulb/ia_image_enhancer_csharp" alt="License" />
   </a>
 </p>
@@ -26,11 +26,11 @@ A cross-platform desktop application and web API for enhancing images using Real
 ## Table of Contents
 
 - [Features](#features)
-- [Downloads](#downloads)
 - [Solution Structure](#solution-structure)
 - [How it Works](#how-it-works)
 - [API Endpoints](#api-endpoints)
 - [Screenshots](#screenshots)
+- [Processing Options Explained](#processing-options-explained)
 - [Prerequisites](#prerequisites)
 - [Required Files](#required-files)
 - [Getting Started](#getting-started)
@@ -42,7 +42,7 @@ A cross-platform desktop application and web API for enhancing images using Real
 ## Features
 
 -   **AI-Powered Upscaling:** Enhance image resolution by 4x using state-of-the-art Real-ESRGAN models.
--   **Multiple AI Models:** Choose from a selection of pre-configured Real-ESRGAN models for different types of images (e.g., general photos, anime).
+-   **Multiple AI Models:** Choose from a selection of pre-configured Real-ESRGAN models for different types of images (e.g., photos, anime).
 -   **Modern Format Conversion:** Convert your images to high-efficiency formats like `.webp` and `.avif` to save disk space.
 -   **Batch Processing:** Process entire folders of images, including subfolders, in one go.
 -   **Cross-Platform:** Runs on Windows, macOS, and Linux.
@@ -51,15 +51,6 @@ A cross-platform desktop application and web API for enhancing images using Real
 -   **Dark & Light Themes:** Switch between themes to match your preference.
 -   **Optional Source File Deletion:** Automatically delete original files after processing to save space.
 -   **Processing Log:** Keep track of all processed images, including details like original and processed sizes, and space savings.
-
-## Downloads
-
-> [!NOTE]
-> I will soon provide links to download ZIP files containing the compiled binaries for each platform (Windows, macOS, Linux), along with all the necessary dependencies.
-
-- **Windows:** (Link will be here)
-- **macOS:** (Link will be here)
-- **Linux:** (Link will be here)
 
 ## Solution Structure
 
@@ -197,33 +188,49 @@ To build and run this project from source, you will need the **.NET 9 SDK**.
 
 ## Required Files
 
-For the application to function correctly, the following files and folders must be placed in the main application directory (e.g., alongside `ImageProcessor.UI.exe` or `ImageProcessor.Api.exe`).
+For the application to function correctly, you need to either build from source and acquire the files listed below, or use a pre-compiled version.
 
 ### 1. External Binaries
 
-This application relies on external command-line tools.
+This application relies on external command-line tools. These must be placed in the main application directory.
 
--   **Real-ESRGAN (realesrgan-ncnn-vulkan):**
-    -   **Repository:** [https://github.com/xinntao/Real-ESRGAN-ncnn-vulkan](https://github.com/xinntao/Real-ESRGAN-ncnn-vulkan)
-    -   **Download:** Download the latest release for your platform from the [releases page](https://github.com/xinntao/Real-ESRGAN-ncnn-vulkan/releases).
+- **Real-ESRGAN (realesrgan-ncnn-vulkan):**
+  - **Repository:** [https://github.com/xinntao/Real-ESRGAN-ncnn-vulkan](https://github.com/xinntao/Real-ESRGAN-ncnn-vulkan)
+  - **Download:** Download the latest release for your platform from the [releases page](https://github.com/xinntao/Real-ESRGAN-ncnn-vulkan/releases).
+
+> ⚠️ **Important**  
+> **GPU Requirement:** AI upscaling requires a graphics card that supports **Vulkan 1.1** or higher.
+
 -   **cwebp (WebP Converter):**
     -   **Repository:** [https://developers.google.com/webp]
     -   **Download:** Download the `libwebp` package for your platform from the [downloads repository](https://storage.googleapis.com/downloads.webmproject.org/releases/webp/index.html).
+
 -   **FFmpeg (AVIF Converter):**
     -   **Website:** [https://ffmpeg.org/](https://ffmpeg.org/)
     -   **Download:** Download a release build for your platform from the [official download page](https://ffmpeg.org/download.html).
 
-> [!IMPORTANT]
+> 💡 **Note**  
 > **Linux/macOS Permissions:** On Linux and macOS, you must grant execution permissions to the binaries.
+>
 > ```bash
 > chmod +x ./realesrgan-ncnn-vulkan
 > chmod +x ./cwebp
 > chmod +x ./ffmpeg
 > ```
 
+
 ### 2. Models Folder
 
 You must have a folder named `models` in the application's root directory. This folder must contain the `.bin` and `.param` files for the Real-ESRGAN models you intend to use.
+
+### 3. Pre-compiled Application (Optional)
+
+> 💡 **Note**  
+> I will soon provide links to download ZIP files containing the compiled binaries for each platform (Windows, macOS, Linux), along with all the necessary dependencies.
+
+- **Windows:** (Link will be here)
+- **macOS:** (Link will be here)
+- **Linux:** (Link will be here)
 
 ## Getting Started
 
