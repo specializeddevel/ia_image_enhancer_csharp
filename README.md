@@ -5,7 +5,7 @@
   <img src="https://img.shields.io/badge/UI-Avalonia-purple" alt="Avalonia UI" />
   <img src="https://img.shields.io/badge/API-ASP.NET%20Core-blueviolet" alt="ASP.NET Core" />
   <img src="https://img.shields.io/badge/platform-windows%20%7C%20macos%20%7C%20linux-lightgrey.svg" alt="Platforms" />
-  <a href="https://github.com/specializeddevel/ia_image_enhancer_csharp/blob/main/LICENSE.md">
+  <a href="https://github.com/raulb/ia_image_enhancer_csharp/blob/main/LICENSE.md">
     <img src="https://img.shields.io/github/license/raulb/ia_image_enhancer_csharp" alt="License" />
   </a>
 </p>
@@ -31,7 +31,7 @@ A cross-platform desktop application and web API for enhancing images using Real
 - [API Endpoints](#api-endpoints)
 - [Screenshots](#screenshots)
 - [Processing Options Explained](#processing-options-explained)
-- [Prerequisites](#prerequisites)
+- [Prerequisites and Downloads](#prerequisites-and-downloads)
 - [Required Files](#required-files)
 - [Getting Started](#getting-started)
 - [Technologies Used](#technologies-used)
@@ -157,13 +157,9 @@ curl "https://localhost:7131/api/Processing/a1b2c3d4-e5f6-7890-1234-567890abcdef
 
 ## Screenshots
 
-**Main Application Window:**
 
-\[Insert Screenshot of the main window here]
+\[https://github.com/user-attachments/assets/65fad462-f0ec-4f5e-b2a6-9ca15cb5af77]
 
-**Processing View:**
-
-\[Insert Screenshot of the application during processing here]
 
 ## Processing Options Explained
 
@@ -180,8 +176,9 @@ The main window provides several options to customize the image processing workf
 | **Include WebP Files**| If checked, existing `.webp` files in the source folder will be included in the processing queue.                                      |
 | **Include Avif Files**| If checked, existing `.avif` files in the source folder will be included in the processing queue.                                      |
 
-
-## Prerequisites
+## Prerequisites and Downloads
+> 💡 **Note**  
+> For now, all Microsoft Windows prerequisites are included in the release package, available inside the compressed file: [https://github.com/specializeddevel/ia_image_enhancer_csharp/releases]
 
 To build and run this project from source, you will need the **.NET 9 SDK**.
 - **Download:** [Download .NET 9 SDK](https://dotnet.microsoft.com/download/dotnet/9.0)
