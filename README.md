@@ -6,18 +6,18 @@
   <img src="https://img.shields.io/badge/API-ASP.NET%20Core-blueviolet" alt="ASP.NET Core" />
   <img src="https://img.shields.io/badge/platform-windows%20%7C%20macos%20%7C%20linux-lightgrey.svg" alt="Platforms" />
   <a href="https://github.com/raulb/ia_image_enhancer_csharp/blob/main/LICENSE.md">
-    <img src="https://img.shields.io/github/license/raulb/ia_image_enhancer_csharp" alt="License" />
+    <img src="https://img.shields.io/github/license/specializeddevel/ia_image_enhancer_csharp" alt="License" />
   </a>
 </p>
 <p align="center">
-  <a href="https://github.com/raulb/ia_image_enhancer_csharp/stargazers">
-    <img src="https://img.shields.io/github/stars/raulb/ia_image_enhancer_csharp?style=social" alt="GitHub Stars" />
+  <a href="https://github.com/specializeddevel/ia_image_enhancer_csharp/stargazers">
+    <img src="https://img.shields.io/github/stars/specializeddevel/ia_image_enhancer_csharp?style=social" alt="GitHub Stars" />
   </a>
-  <a href="https://github.com/raulb/ia_image_enhancer_csharp/network/members">
-    <img src="https://img.shields.io/github/forks/raulb/ia_image_enhancer_csharp?style=social" alt="GitHub Forks" />
+  <a href="https://github.com/specializeddevel/ia_image_enhancer_csharp/network/members">
+    <img src="https://img.shields.io/github/forks/specializeddevel/ia_image_enhancer_csharp?style=social" alt="GitHub Forks" />
   </a>
-  <a href="https://github.com/raulb/ia_image_enhancer_csharp/issues">
-    <img src="https://img.shields.io/github/issues/raulb/ia_image_enhancer_csharp" alt="GitHub Issues" />
+  <a href="https://github.com/specializeddevel/ia_image_enhancer_csharp/issues">
+    <img src="https://img.shields.io/github/issues/specializeddevel/ia_image_enhancer_csharp" alt="GitHub Issues" />
   </a>
 </p>
 
@@ -194,6 +194,37 @@ To build and run this project from source, you will need the **.NET 9 SDK**.
 ## Required Files
 
 For the application to function correctly, you need to either build from source and acquire the files listed below, or use a pre-compiled version.
+
+### Folder Structure Example (Windows)
+
+This is an example of the required folder structure for running ImageProcessor.UI from the packaged release on Windows. The same structure applies to ImageProcessor.Api.
+
+```
+ImageProcessor.UI
+└── models/                     # realesrgan models
+├── cwebp.exe                   # Compression Windows executable
+├── ffmpeg.exe                  # Ffmpeg Windows executable
+├── ImageProcessor.UI.exe          # Main ImageProcessor User Interface executable.
+├── realesrgan-ncnn-vulkan.exe  # AI model Windows executable
+```
+
+If you are running the project from source, make sure the required files follow this structure:
+
+```
+\ia_image_enhancer_csharp
+
+ ImageProcessor.UI/                   # Compression Windows executable
+ └──── bin
+        └─── Debug
+              └─── net9.0
+                    └─── models/                     # realesrgan models
+                          └─── realesr-animevideov3-x2.bin
+                          └─── ...      
+                    ├─── cwebp.exe                   # Compression Windows executable
+                    ├─── ffmpeg.exe                  # Ffmpeg Windows executable
+                    ├─── ImageProcessor.UI.exe       # Main ImageProcessor User Interface executable.
+                    └─── realesrgan-ncnn-vulkan.exe  # AI model Windows executable
+```
 
 ### 1. External Binaries
 
