@@ -41,32 +41,32 @@ A cross-platform desktop application and web API for enhancing images using Real
 
 ## Features
 
--   **AI-Powered Upscaling:** Enhance image resolution by 4x using state-of-the-art Real-ESRGAN models.
--   **Multiple AI Models:** Choose from a selection of pre-configured Real-ESRGAN models for different types of images (e.g., photos, anime).
--   **Modern Format Conversion:** Convert your images to high-efficiency formats like `.webp` and `.avif` to save disk space.
--   **Batch Processing:** Process entire folders of images, including subfolders, in one go.
--   **Cross-Platform:** Runs on Windows, macOS, and Linux.
--   **User-Friendly GUI:** A simple and intuitive graphical interface built with Avalonia UI.
--   **Web API:** A headless web API for programmatic access to the image processing functionality.
--   **Dark & Light Themes:** Switch between themes to match your preference.
--   **Optional Source File Deletion:** Automatically delete original files after processing to save space.
--   **Processing Log:** Keep track of all processed images, including details like original and processed sizes, and space savings.
+- **AI-Powered Upscaling:** Enhance image resolution by 4x using state-of-the-art Real-ESRGAN models.
+- **Multiple AI Models:** Choose from a selection of pre-configured Real-ESRGAN models for different types of images (e.g., photos, anime).
+- **Modern Format Conversion:** Convert your images to high-efficiency formats like `.webp` and `.avif` to save disk space.
+- **Batch Processing:** Process entire folders of images, including subfolders, in one go.
+- **Cross-Platform:** Runs on Windows, macOS, and Linux.
+- **User-Friendly GUI:** A simple and intuitive graphical interface built with Avalonia UI.
+- **Web API:** A headless web API for programmatic access to the image processing functionality.
+- **Dark & Light Themes:** Switch between themes to match your preference.
+- **Optional Source File Deletion:** Automatically delete original files after processing to save space.
+- **Processing Log:** Keep track of all processed images, including details like original and processed sizes, and space savings.
 
 ## Solution Structure
 
 The solution is divided into three projects:
 
--   **`ImageProcessor.Core`:** A .NET library project that contains the core logic for image processing. It orchestrates the command-line tools to perform image enhancement and conversion.
--   **`ImageProcessor.Api`:** An ASP.NET Core web API that exposes the image processing functionality as a web service.
--   **`ImageProcessor.UI`:** A desktop application built with Avalonia UI that provides a graphical user interface.
+- **`ImageProcessor.Core`:** A .NET library project that contains the core logic for image processing. It orchestrates the command-line tools to perform image enhancement and conversion.
+- **`ImageProcessor.Api`:** An ASP.NET Core web API that exposes the image processing functionality as a web service.
+- **`ImageProcessor.UI`:** A desktop application built with Avalonia UI that provides a graphical user interface.
 
 ## How it Works
 
 The application uses a pipeline of command-line tools to process images:
 
-1.  **Upscaling (Optional):** If enabled, the source image is first passed to `realesrgan-ncnn-vulkan` to be upscaled.
-2.  **Conversion (Optional):** The (potentially upscaled) image is then converted to either `.webp` using `cwebp.exe` or `.avif` using `ffmpeg.exe`.
-3.  **File Handling:** The application manages the creation of output folders and the deletion of intermediate and source files.
+1. **Upscaling (Optional):** If enabled, the source image is first passed to `realesrgan-ncnn-vulkan` to be upscaled.
+2. **Conversion (Optional):** The (potentially upscaled) image is then converted to either `.webp` using `cwebp.exe` or `.avif` using `ffmpeg.exe`.
+3. **File Handling:** The application manages the creation of output folders and the deletion of intermediate and source files.
 
 The API uses a job-based system to handle processing requests asynchronously.
 
@@ -79,6 +79,7 @@ The API provides endpoints for starting and monitoring processing jobs.
 Starts a new image processing job. The request body must be a JSON object with the processing options. The response will contain a `jobId` that can be used to track the status of the job.
 
 **Example JSON Body:**
+
 ```json
 {
   "inputFolder": "C:\\path\\to\\your\\images",
@@ -95,12 +96,15 @@ Starts a new image processing job. The request body must be a JSON object with t
 ```
 
 **Example `curl` command:**
+
 ```bash
 curl -X POST "https://localhost:7131/api/Processing/start" -H "Content-Type: application/json" -d "{\"inputFolder\": \"C:\\\\path\\\\to\\\\your\\\\images\", \"outputFolder\": \"C:\\\\path\\\\to\\\\output\", \"model\": \"realesrgan-x4plus\", \"processSubfolders\": true, \"convertToWebP\": true, \"applyUpscale\": true}" --insecure
 ```
+
 *Note: The `--insecure` flag is used here to bypass SSL certificate verification for the self-signed development certificate. On Windows Command Prompt, you may need to adjust the escaping of quotes and backslashes.*
 
 **Example Response:**
+
 ```json
 {
   "jobId": "a1b2c3d4-e5f6-7890-1234-567890abcdef"
@@ -112,11 +116,13 @@ curl -X POST "https://localhost:7131/api/Processing/start" -H "Content-Type: app
 Gets the current status of a processing job.
 
 **Example `curl` command:**
+
 ```bash
 curl "https://localhost:7131/api/Processing/a1b2c3d4-e5f6-7890-1234-567890abcdef/status" --insecure
 ```
 
 **Example Response:**
+
 ```json
 {
   "id": "a1b2c3d4-e5f6-7890-1234-567890abcdef",
@@ -134,11 +140,13 @@ curl "https://localhost:7131/api/Processing/a1b2c3d4-e5f6-7890-1234-567890abcdef
 Gets the complete progress history of a processing job.
 
 **Example `curl` command:**
+
 ```bash
 curl "https://localhost:7131/api/Processing/a1b2c3d4-e5f6-7890-1234-567890abcdef/history" --insecure
 ```
 
 **Example Response:**
+
 ```json
 [
   {
@@ -157,9 +165,7 @@ curl "https://localhost:7131/api/Processing/a1b2c3d4-e5f6-7890-1234-567890abcdef
 
 ## Screenshots
 
-
-\[https://github.com/user-attachments/assets/65fad462-f0ec-4f5e-b2a6-9ca15cb5af77]
-
+![IMAGE](https://github.com/user-attachments/assets/65fad462-f0ec-4f5e-b2a6-9ca15cb5af77)
 
 ## Processing Options Explained
 
@@ -177,10 +183,12 @@ The main window provides several options to customize the image processing workf
 | **Include Avif Files**| If checked, existing `.avif` files in the source folder will be included in the processing queue.                                      |
 
 ## Prerequisites and Downloads
+>
 > 💡 **Note**  
 > For now, all Microsoft Windows prerequisites are included in the release package, available inside the compressed file: [https://github.com/specializeddevel/ia_image_enhancer_csharp/releases]
 
 To build and run this project from source, you will need the **.NET 9 SDK**.
+
 - **Download:** [Download .NET 9 SDK](https://dotnet.microsoft.com/download/dotnet/9.0)
 
 ## Required Files
@@ -198,13 +206,13 @@ This application relies on external command-line tools. These must be placed in 
 > ⚠️ **Important**  
 > **GPU Requirement:** AI upscaling requires a graphics card that supports **Vulkan 1.1** or higher.
 
--   **cwebp (WebP Converter):**
-    -   **Repository:** [https://developers.google.com/webp]
-    -   **Download:** Download the `libwebp` package for your platform from the [downloads repository](https://storage.googleapis.com/downloads.webmproject.org/releases/webp/index.html).
+- **cwebp (WebP Converter):**
+  - **Repository:** [https://developers.google.com/webp]
+  - **Download:** Download the `libwebp` package for your platform from the [downloads repository](https://storage.googleapis.com/downloads.webmproject.org/releases/webp/index.html).
 
--   **FFmpeg (AVIF Converter):**
-    -   **Website:** [https://ffmpeg.org/](https://ffmpeg.org/)
-    -   **Download:** Download a release build for your platform from the [official download page](https://ffmpeg.org/download.html).
+- **FFmpeg (AVIF Converter):**
+  - **Website:** [https://ffmpeg.org/](https://ffmpeg.org/)
+  - **Download:** Download a release build for your platform from the [official download page](https://ffmpeg.org/download.html).
 
 > 💡 **Note**  
 > **Linux/macOS Permissions:** On Linux and macOS, you must grant execution permissions to the binaries.
@@ -214,7 +222,6 @@ This application relies on external command-line tools. These must be placed in 
 > chmod +x ./cwebp
 > chmod +x ./ffmpeg
 > ```
-
 
 ### 2. Models Folder
 
@@ -231,34 +238,41 @@ You must have a folder named `models` in the application's root directory. This 
 
 ## Getting Started
 
-1.  **Clone the repository:**
+1. **Clone the repository:**
+
     ```bash
     git clone https://github.com/your-username/image_enhancer_csharp.git
     cd image_enhancer_csharp
     ```
-2.  **Add Required Files:**
+
+2. **Add Required Files:**
     Follow the instructions in the [Required Files](#required-files) section to download and place the necessary binaries and models.
-3.  **Build the project:**
+3. **Build the project:**
+
     ```bash
     dotnet build
     ```
-4.  **Run the application:**
-    -   **To run the Desktop UI:**
+
+4. **Run the application:**
+    - **To run the Desktop UI:**
+
         ```bash
         dotnet run --project ImageProcessor.UI
         ```
-    -   **To run the Web API:**
+
+    - **To run the Web API:**
+
         ```bash
         dotnet run --project ImageProcessor.Api
         ```
 
 ## Technologies Used
 
--   **.NET 9 / C#:** The core application logic and UI are built with the latest version of .NET.
--   **Avalonia UI:** A cross-platform UI framework for creating the desktop application.
--   **ASP.NET Core:** Used to create the Web API for headless processing.
--   **MVVM Pattern:** The Model-View-ViewModel pattern is used to structure the UI code, powered by the **CommunityToolkit.Mvvm** library.
--   **Swagger / OpenAPI:** Used for API documentation and testing in the `ImageProcessor.Api` project via the **Swashbuckle.AspNetCore** library.
+- **.NET 9 / C#:** The core application logic and UI are built with the latest version of .NET.
+- **Avalonia UI:** A cross-platform UI framework for creating the desktop application.
+- **ASP.NET Core:** Used to create the Web API for headless processing.
+- **MVVM Pattern:** The Model-View-ViewModel pattern is used to structure the UI code, powered by the **CommunityToolkit.Mvvm** library.
+- **Swagger / OpenAPI:** Used for API documentation and testing in the `ImageProcessor.Api` project via the **Swashbuckle.AspNetCore** library.
 
 ## Contributing
 
