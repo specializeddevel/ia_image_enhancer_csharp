@@ -262,7 +262,14 @@ public class ImageProcessorService
 
         if (options.ApplyUpscale)
         {
-            await RunProcessAsync(_realesrganExecutablePath, $"-i \"{file.FullName}\" -o \"{improvedPngPath}\" -n {options.Model} -f png -m \"{_modelsPath}\"", cancellationToken);
+            string arguments = SettingsService.Instance.RealEsrganSettings.CommandArguments
+                .Replace("{inputFile}", $"\"{file.FullName}\"")
+                .Replace("{outputFile}", $"\"{improvedPngPath}\"")
+                .Replace("{modelName}", options.Model)
+                .Replace("{scale}", "4") // Future improvement: make scale configurable in options
+                .Replace("{modelsPath}", $"\"{_modelsPath}\"");
+
+            await RunProcessAsync(_realesrganExecutablePath, arguments, cancellationToken);
         }
 
         string sourceForConversion = options.ApplyUpscale && File.Exists(improvedPngPath) ? improvedPngPath : file.FullName;

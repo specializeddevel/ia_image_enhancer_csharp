@@ -168,6 +168,16 @@ public partial class MainWindowViewModel : ObservableObject
         }
     }
 
+    [RelayCommand]
+    private async Task OpenSettings(object parameter)
+    {
+        if (parameter is Window owner)
+        {
+            var settingsWindow = new SettingsView();
+            await settingsWindow.ShowDialog(owner);
+        }
+    }
+
     [RelayCommand(CanExecute = nameof(CanStartProcessing))]
     private async Task StartProcessing()
     {

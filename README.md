@@ -201,30 +201,34 @@ This is an example of the required folder structure for running ImageProcessor.U
 
 ```
 ImageProcessor.UI
-└── models/                     # realesrgan models
-├── cwebp.exe                   # Compression Windows executable
-├── ffmpeg.exe                  # Ffmpeg Windows executable
-├── ImageProcessor.UI.exe          # Main ImageProcessor User Interface executable.
-├── realesrgan-ncnn-vulkan.exe  # AI model Windows executable
+└─ models/                         # realesrgan models
+    └─ realesr-animevideov3-x2.bin
+    └─ ...      
+├─ cwebp.exe                       # Compression Windows executable
+├─ ffmpeg.exe                      # Ffmpeg Windows executable
+├─ ImageProcessor.UI.exe           # Main ImageProcessor User Interface executable.
+└─ realesrgan-ncnn-vulkan.exe      # AI model Windows executable
 ```
 
 If you are running the project from source, make sure the required files follow this structure:
 
 ```
-\ia_image_enhancer_csharp
-
- ImageProcessor.UI/                   # Compression Windows executable
- └──── bin
-        └─── Debug
-              └─── net9.0
-                    └─── models/                     # realesrgan models
-                          └─── realesr-animevideov3-x2.bin
-                          └─── ...      
-                    ├─── cwebp.exe                   # Compression Windows executable
-                    ├─── ffmpeg.exe                  # Ffmpeg Windows executable
-                    ├─── ImageProcessor.UI.exe       # Main ImageProcessor User Interface executable.
-                    └─── realesrgan-ncnn-vulkan.exe  # AI model Windows executable
+ia_image_enhancer_csharp/
+└─ ImageProcessor.UI/          
+   └─ bin/
+      └─ Debug/
+         └─ net9.0/
+            └─ models/                     # realesrgan models
+               └─ realesr-animevideov3-x2.bin
+               └─ ...      
+            ├─ cwebp.exe                   # Compression Windows executable
+            ├─ ffmpeg.exe                  # Ffmpeg Windows executable
+            ├─ ImageProcessor.UI.exe       # Main ImageProcessor User Interface executable.
+            └─ realesrgan-ncnn-vulkan.exe  # AI model Windows executable
 ```
+
+> 💡 **Note**
+> The /bin folder will be generated automatically after the first successful build.
 
 ### 1. External Binaries
 

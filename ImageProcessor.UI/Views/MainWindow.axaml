@@ -37,7 +37,8 @@
 
         <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="5" HorizontalAlignment="Right">
             <TextBlock Text="Dark Theme" VerticalAlignment="Center"/>
-            <ToggleSwitch IsChecked="{Binding IsDarkMode}" />            
+            <ToggleSwitch IsChecked="{Binding IsDarkMode}" />
+            <Button Content="⚙️" Command="{Binding OpenSettingsCommand}" CommandParameter="{Binding $parent[Window]}" ToolTip.Tip="Settings" Margin="5,0,0,0"/>
         </StackPanel>
         
         <SplitView Grid.Row="1" 
