@@ -17,7 +17,14 @@ public partial class LogViewModel : ViewModelBase
     private readonly ProcessingLogService _logService;
 
     [ObservableProperty]
-    private ObservableCollection<DailyLog> _dailyLogs = new();
+    private ObservableCollection<ProcessingLogEntry> _logEntries = new();
+
+    // Constructor for design-time
+    public LogViewModel()
+    {
+        _logService = new ProcessingLogService();
+        LoadLogEntries();
+    }
 
     public LogViewModel(ProcessingLogService logService)
     {
@@ -27,19 +34,8 @@ public partial class LogViewModel : ViewModelBase
 
     private void LoadLogEntries()
     {
-        var entries = _logService.GetLogEntries()
-            .GroupBy(e => e.Date.Date)
-            .Select(g => new DailyLog
-            {
-                Date = g.Key,
-                Entries = new ObservableCollection<ProcessingLogEntry>(g.ToList()),
-                TotalOriginalSize = g.Sum(e => e.OriginalSize),
-                TotalProcessedSize = g.Sum(e => e.ProcessedSize)
-            })
-            .OrderByDescending(d => d.Date);
-
-        DailyLogs = new ObservableCollection<DailyLog>(entries);
-        System.Diagnostics.Debug.WriteLine($"Found {DailyLogs.Count} daily logs.");
+        var entries = _logService.GetLogEntries().OrderByDescending(e => e.Date);
+        LogEntries = new ObservableCollection<ProcessingLogEntry>(entries);
     }
 
     [RelayCommand]
@@ -59,12 +55,9 @@ public partial class LogViewModel : ViewModelBase
             var sb = new StringBuilder();
             sb.AppendLine("Time;Input Folder;Output Folder;Original File Name;Processed File Name;Original Size;Processed Size;Reduction");
 
-            foreach (var dailyLog in DailyLogs)
+            foreach (var entry in LogEntries)
             {
-                foreach (var entry in dailyLog.Entries)
-                {
-                    sb.AppendLine($"{entry.Date:HH:mm:ss};{entry.InputFolder};{entry.OutputFolder};{entry.OriginalFileName};{entry.ProcessedFileName};{entry.OriginalSize};{entry.ProcessedSize};{entry.ReductionPercentage:P}");
-                }
+                sb.AppendLine($"{entry.Date:HH:mm:ss};{entry.InputFolder};{entry.OutputFolder};{entry.OriginalFileName};{entry.ProcessedFileName};{entry.OriginalSize};{entry.ProcessedSize};{entry.ReductionPercentage:P}");
             }
 
             await File.WriteAllTextAsync(result, sb.ToString());
@@ -90,7 +83,7 @@ public partial class LogViewModel : ViewModelBase
     private void ConfirmClearLog()
     {
         _logService.ClearLog();
-        DailyLogs.Clear();
+        LogEntries.Clear();
         IsClearConfirmationVisible = false;
     }
 
@@ -99,21 +92,4 @@ public partial class LogViewModel : ViewModelBase
     {
         IsClearConfirmationVisible = false;
     }
-}
-
-public partial class DailyLog : ViewModelBase
-{
-    [ObservableProperty]
-    private DateTime _date;
-
-    [ObservableProperty]
-    private ObservableCollection<ProcessingLogEntry> _entries = new();
-
-    [ObservableProperty]
-    private long _totalOriginalSize;
-
-    [ObservableProperty]
-    private long _totalProcessedSize;
-
-        public double TotalReductionPercentage => TotalOriginalSize > 0 ? (double)(TotalOriginalSize - TotalProcessedSize) / TotalOriginalSize : 0;
 }

@@ -3,17 +3,19 @@
         xmlns:vm="using:ImageProcessor.UI.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:views="using:ImageProcessor.UI.Views"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
+        xmlns:ui="using:ImageProcessor.UI"
+        mc:Ignorable="d" d:DesignWidth="1024" d:DesignHeight="600"
         x:Class="ImageProcessor.UI.Views.LogView"
         x:DataType="vm:LogViewModel"
         WindowStartupLocation="CenterOwner"
         Title="Processing Log"
-        Width="800" Height="600">
+        Width="1024" Height="600">
 
-    <Design.DataContext>
-        <vm:LogViewModel/>
-    </Design.DataContext>
+    
+
+    
+
+    
 
     <Window.Styles>
         <Style Selector="TextBlock.Monospace">
@@ -36,64 +38,61 @@
             <Button Content="Close" Command="{Binding CloseWindowCommand}" CommandParameter="{Binding $parent[Window]}"/>
         </StackPanel>
 
-        <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-            <ItemsControl ItemsSource="{Binding DailyLogs}">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel Grid.IsSharedSizeScope="True">
-                            <TextBlock Text="{Binding Date, StringFormat='yyyy-MM-dd'}" FontWeight="Bold"/>
-                            <!-- Headers Grid -->
-                            <Grid ColumnSpacing="10" Margin="0,5">
+                <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible" Margin="0,10,0,0">
+            <Grid Grid.IsSharedSizeScope="True">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <Grid Grid.Row="0" ColumnSpacing="10" Margin="0,10,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="150" SharedSizeGroup="A"/>
+                        <ColumnDefinition Width="*" SharedSizeGroup="B"/>
+                        <ColumnDefinition Width="*" SharedSizeGroup="C"/>
+                        <ColumnDefinition Width="*" SharedSizeGroup="D"/>
+                        <ColumnDefinition Width="*" SharedSizeGroup="E"/>
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="F"/>
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="G"/>
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="H"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Text="Date" FontWeight="Bold" Classes="Monospace"/>
+                    <TextBlock Grid.Column="1" Text="Input Folder" FontWeight="Bold" Classes="Monospace"/>
+                    <TextBlock Grid.Column="2" Text="Output Folder" FontWeight="Bold" Classes="Monospace"/>
+                    <TextBlock Grid.Column="3" Text="Original File" FontWeight="Bold" Classes="Monospace"/>
+                    <TextBlock Grid.Column="4" Text="Processed File" FontWeight="Bold" Classes="Monospace"/>
+                    <TextBlock Grid.Column="5" Text="Original Size" FontWeight="Bold" Classes="Monospace"/>
+                    <TextBlock Grid.Column="6" Text="Processed Size" FontWeight="Bold" Classes="Monospace"/>
+                    <TextBlock Grid.Column="7" Text="Reduction" FontWeight="Bold" Classes="Monospace"/>
+                </Grid>
+
+                <ListBox Grid.Row="1" ItemsSource="{Binding LogEntries}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Grid ColumnSpacing="10">
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" SharedSizeGroup="TimeCol"/>
-                                    <ColumnDefinition Width="*" SharedSizeGroup="InputFolderCol"/>
-                                    <ColumnDefinition Width="*" SharedSizeGroup="OutputFolderCol"/>
-                                    <ColumnDefinition Width="*" SharedSizeGroup="OriginalFileNameCol"/>
-                                    <ColumnDefinition Width="*" SharedSizeGroup="ProcessedFileNameCol"/>
-                                    <ColumnDefinition Width="Auto" SharedSizeGroup="OriginalSizeCol"/>
-                                    <ColumnDefinition Width="Auto" SharedSizeGroup="ProcessedSizeCol"/>
-                                    <ColumnDefinition Width="Auto" SharedSizeGroup="ReductionCol"/>
+                                    <ColumnDefinition Width="150" SharedSizeGroup="A"/>
+                                    <ColumnDefinition Width="*" SharedSizeGroup="B"/>
+                                    <ColumnDefinition Width="*" SharedSizeGroup="C"/>
+                                    <ColumnDefinition Width="*" SharedSizeGroup="D"/>
+                                    <ColumnDefinition Width="*" SharedSizeGroup="E"/>
+                                    <ColumnDefinition Width="Auto" SharedSizeGroup="F"/>
+                                    <ColumnDefinition Width="Auto" SharedSizeGroup="G"/>
+                                    <ColumnDefinition Width="Auto" SharedSizeGroup="H"/>
                                 </Grid.ColumnDefinitions>
-                                <TextBlock Grid.Column="0" Text="Time" FontWeight="Bold" Classes="Monospace"/>
-                                <TextBlock Grid.Column="1" Text="Input Folder" FontWeight="Bold" Classes="Monospace"/>
-                                <TextBlock Grid.Column="2" Text="Output Folder" FontWeight="Bold" Classes="Monospace"/>
-                                <TextBlock Grid.Column="3" Text="Original File Name" FontWeight="Bold" Classes="Monospace"/>
-                                <TextBlock Grid.Column="4" Text="Processed File Name" FontWeight="Bold" Classes="Monospace"/>
-                                <TextBlock Grid.Column="5" Text="Original Size" FontWeight="Bold" Classes="Monospace"/>
-                                <TextBlock Grid.Column="6" Text="Processed Size" FontWeight="Bold" Classes="Monospace"/>
-                                <TextBlock Grid.Column="7" Text="Reduction" FontWeight="Bold" Classes="Monospace"/>
+                                <TextBlock Grid.Column="0" Text="{Binding Date, StringFormat='yyyy-MM-dd HH:mm:ss'}" Classes="Monospace"/>
+                                <TextBlock Grid.Column="1" Text="{Binding InputFolder}" TextTrimming="CharacterEllipsis" Classes="Monospace"/>
+                                <TextBlock Grid.Column="2" Text="{Binding OutputFolder}" TextTrimming="CharacterEllipsis" Classes="Monospace"/>
+                                <TextBlock Grid.Column="3" Text="{Binding OriginalFileName}" TextTrimming="CharacterEllipsis" Classes="Monospace"/>
+                                <TextBlock Grid.Column="4" Text="{Binding ProcessedFileName}" TextTrimming="CharacterEllipsis" Classes="Monospace"/>
+                                <TextBlock Grid.Column="5" Text="{Binding OriginalSize, StringFormat='N0'}" Classes="Monospace"/>
+                                <TextBlock Grid.Column="6" Text="{Binding ProcessedSize, StringFormat='N0'}" Classes="Monospace"/>
+                                <TextBlock Grid.Column="7" Text="{Binding ReductionPercentage, StringFormat='P1'}" Classes="Monospace"/>
                             </Grid>
-                            <!-- Content ItemsControl -->
-                            <ItemsControl ItemsSource="{Binding Entries}">
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <Grid ColumnSpacing="10" Margin="0,0,0,0"> <!-- Removed Margin from here -->
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto" SharedSizeGroup="TimeCol"/>
-                                                <ColumnDefinition Width="*" SharedSizeGroup="InputFolderCol"/>
-                                                <ColumnDefinition Width="*" SharedSizeGroup="OutputFolderCol"/>
-                                                <ColumnDefinition Width="*" SharedSizeGroup="OriginalFileNameCol"/>
-                                                <ColumnDefinition Width="*" SharedSizeGroup="ProcessedFileNameCol" />
-                                                <ColumnDefinition Width="Auto" SharedSizeGroup="OriginalSizeCol"/>
-                                                <ColumnDefinition Width="Auto" SharedSizeGroup="ProcessedSizeCol"/>
-                                                <ColumnDefinition Width="Auto" SharedSizeGroup="ReductionCol"/>
-                                            </Grid.ColumnDefinitions>
-                                            <TextBlock Grid.Column="0" Text="{Binding Date, StringFormat='HH:mm:ss'}" Classes="Monospace"/>
-                                            <TextBlock Grid.Column="1" Text="{Binding InputFolder}" TextTrimming="CharacterEllipsis" Classes="Monospace"/>
-                                            <TextBlock Grid.Column="2" Text="{Binding OutputFolder}" TextTrimming="CharacterEllipsis" Classes="Monospace"/>
-                                            <TextBlock Grid.Column="3" Text="{Binding OriginalFileName}" TextTrimming="CharacterEllipsis" Classes="Monospace"/>
-                                            <TextBlock Grid.Column="4" Text="{Binding ProcessedFileName}" TextTrimming="CharacterEllipsis" Classes="Monospace"/>
-                                            <TextBlock Grid.Column="5" Text="{Binding OriginalSize, StringFormat='N0'}" Classes="Monospace"/>
-                                            <TextBlock Grid.Column="6" Text="{Binding ProcessedSize, StringFormat='N0'}" Classes="Monospace"/>
-                                            <TextBlock Grid.Column="7" Text="{Binding ReductionPercentage, StringFormat='P1'}" Classes="Monospace"/>
-                                        </Grid>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-                        </StackPanel>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </Grid>
         </ScrollViewer>
         
         <!-- Confirmation Dialog -->
