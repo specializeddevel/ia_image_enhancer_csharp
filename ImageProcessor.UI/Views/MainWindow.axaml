@@ -129,7 +129,7 @@
                     
                     <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10" RowSpacing="10">
                         <Button Grid.Column="0" Content="Start Processing" Command="{Binding StartProcessingCommand}" IsEnabled="{Binding StartProcessingCommand.CanExecute}" HorizontalAlignment="Stretch" Classes="Accent"/>
-                        <Button Grid.Column="1" Content="Cancel" Command="{Binding CancelProcessingCommand}" IsEnabled="{Binding CancelProcessingCommand.CanExecute}" HorizontalAlignment="Stretch"/>
+                        <Button Grid.Column="1" Content="Cancel" Command="{Binding CancelProcessingCommand}" CommandParameter="{Binding $parent[Window]}" IsEnabled="{Binding CancelProcessingCommand.CanExecute}" HorizontalAlignment="Stretch"/>
                         <Button Grid.Column="2" Content="View Log" Command="{Binding ViewLogCommand}" CommandParameter="{Binding $parent[Window]}" HorizontalAlignment="Stretch" IsEnabled="{Binding IsUiEnabled}"/>
                     </Grid>
                     <Button Name="ExitButton" Content="Exit" HorizontalAlignment="Stretch" IsEnabled="{Binding IsUiEnabled}" HorizontalContentAlignment="Center"/>

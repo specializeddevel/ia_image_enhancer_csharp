@@ -348,9 +348,15 @@ public partial class MainWindowViewModel : ObservableObject
     }
 
     [RelayCommand(CanExecute = nameof(CanCancelProcessing))]
-    private void CancelProcessing()
+    private async Task CancelProcessing(Window owner)
     {
-        _cancellationTokenSource?.Cancel();
+        var dialog = new ConfirmCloseWindow();
+        var result = await dialog.ShowDialog<bool>(owner);
+
+        if (result)
+        {
+            _cancellationTokenSource?.Cancel();
+        }
     }
 
     private bool CanCancelProcessing()
