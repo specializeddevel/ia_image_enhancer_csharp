@@ -1,0 +1,19 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="150"
+        x:Class="ImageProcessor.UI.Views.ConfirmCloseWindow"
+        Title="Confirm Close"
+        WindowStartupLocation="CenterOwner"
+        CanResize="False"
+        SizeToContent="WidthAndHeight">
+
+    <StackPanel Margin="20" Spacing="10">
+        <TextBlock Text="A process is currently running. Are you sure you want to exit? The current process will be canceled." TextWrapping="Wrap"/>
+        <Grid ColumnDefinitions="*,*" ColumnSpacing="10" Margin="0,10,0,0">
+            <Button Grid.Column="0" Content="Yes" Click="YesButton_Click" Classes="Accent"/>
+            <Button Grid.Column="1" Content="No" Click="NoButton_Click"/>
+        </Grid>
+    </StackPanel>
+</Window>

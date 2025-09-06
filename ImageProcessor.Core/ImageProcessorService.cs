@@ -33,7 +33,7 @@ public class ImageProcessorService
         {
             _realesrganExecutablePath = Path.Combine(currentDir, "realesrgan-ncnn-vulkan-mac");
             _cwebpExecutablePath = Path.Combine(currentDir, "cwebp-mac");
-            _ffmpegExecutablePath = Path.Combine(currentDir, "ffmpeg");
+            _ffmpegExecutablePath = Path.Combine(currentDir, "ffmpeg-mac");
         }
         else
         {
