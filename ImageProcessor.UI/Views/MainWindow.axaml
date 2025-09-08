@@ -77,7 +77,7 @@
 
                     <TextBlock Text="Processing Options" FontWeight="Bold" IsEnabled="{Binding IsUiEnabled}"/>
                     <CheckBox Content="Show Preview" IsChecked="{Binding ShowPreview}"/>
-                    <WrapPanel Orientation="Horizontal" IsEnabled="{Binding IsUiEnabled}">
+                    <WrapPanel Orientation="Horizontal" IsVisible="{Binding IsUiEnabled}">
                         <CheckBox Content="Apply 4x Upscale" IsChecked="{Binding ApplyUpscale}"/>
                         <CheckBox Content="Convert to .WebP" IsChecked="{Binding ConvertToWebP}"/>
                         <CheckBox Content="Convert to .AVIF" IsChecked="{Binding ConvertToAvif}"/>
@@ -89,7 +89,7 @@
 
                     <Separator Margin="0,10"/>
 
-                    <TextBlock Text="Status" FontWeight="Bold"/>
+                    <TextBlock Text="Processing Status" FontWeight="Bold"/>
 
                   <Grid ColumnDefinitions="*,Auto,Auto,Auto" IsVisible="{Binding IsProcessing}" VerticalAlignment="Center">
                     <ProgressBar Grid.Column="0" Value="{Binding ProgressBarValue}" Minimum="0" Maximum="100" ShowProgressText="True" Margin="0 1" Height="20"/>
@@ -120,6 +120,12 @@
                         <TextBlock Grid.Column="2" Text="{Binding FilesInCurrentFolder, StringFormat=({0} files)}" HorizontalAlignment="Right"/>
                     </Grid>
 
+                    <Grid ColumnDefinitions="Auto,*,Auto" IsVisible="{Binding IsProcessing}">
+                        <TextBlock Grid.Column="0" Text="File: " FontWeight="Bold"/>
+                        <TextBlock Grid.Column="1" Text="{Binding CurrentFile}" HorizontalAlignment="Left" TextTrimming="CharacterEllipsis"/>
+                        <TextBlock Grid.Column="2" Text="{Binding HumanReadableCurrentFileSize}" HorizontalAlignment="Right"/>
+                    </Grid>
+
                     <TextBlock Text="{Binding StatusMessage}" TextWrapping="Wrap" Height="40"/>
 
                   <StackPanel Orientation="Horizontal" Spacing="10" Margin="0,5,0,0" IsVisible="{Binding IsProcessing}" HorizontalAlignment="Center">
@@ -128,11 +134,11 @@
                   </StackPanel>
                     
                     <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10" RowSpacing="10">
-                        <Button Grid.Column="0" Content="Start Processing" Command="{Binding StartProcessingCommand}" IsEnabled="{Binding StartProcessingCommand.CanExecute}" HorizontalAlignment="Stretch" Classes="Accent"/>
-                        <Button Grid.Column="1" Content="Cancel" Command="{Binding CancelProcessingCommand}" CommandParameter="{Binding $parent[Window]}" IsEnabled="{Binding CancelProcessingCommand.CanExecute}" HorizontalAlignment="Stretch"/>
-                        <Button Grid.Column="2" Content="View Log" Command="{Binding ViewLogCommand}" CommandParameter="{Binding $parent[Window]}" HorizontalAlignment="Stretch" IsEnabled="{Binding IsUiEnabled}"/>
+                        <Button Grid.Column="0" Content="Start Processing" Command="{Binding StartProcessingCommand}" IsEnabled="{Binding StartProcessingCommand.CanExecute}" HorizontalAlignment="Stretch" Classes="Accent" IsVisible="{Binding IsUiEnabled}" HorizontalContentAlignment="Center"/>
+                        <Button Grid.Column="1" Content="Cancel" Command="{Binding CancelProcessingCommand}" CommandParameter="{Binding $parent[Window]}" IsEnabled="{Binding CancelProcessingCommand.CanExecute}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"/>
+                        <Button Grid.Column="2" Content="View Log" Command="{Binding ViewLogCommand}" CommandParameter="{Binding $parent[Window]}" HorizontalAlignment="Stretch" IsVisible="{Binding IsUiEnabled}" HorizontalContentAlignment="Center"/>
                     </Grid>
-                    <Button Name="ExitButton" Content="Exit" HorizontalAlignment="Stretch" IsEnabled="{Binding IsUiEnabled}" HorizontalContentAlignment="Center"/>
+                    <Button Name="ExitButton" Content="Exit" HorizontalAlignment="Stretch" IsVisible="{Binding IsUiEnabled}" HorizontalContentAlignment="Center"/>
                 </StackPanel>
             </SplitView.Content>
             <SplitView.Pane>

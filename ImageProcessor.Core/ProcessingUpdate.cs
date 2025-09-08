@@ -87,4 +87,9 @@ public class ProcessingUpdate
     /// The total converted size of all files, in bytes.
     /// </summary>
     public long TotalConvertedSize { get; set; }
+
+    /// <summary>
+    /// The size of the file currently being processed, in bytes.
+    /// </summary>
+    public long CurrentFileSize { get; set; }
 }

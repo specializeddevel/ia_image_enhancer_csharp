@@ -131,6 +131,7 @@ public class ImageProcessorService
                 {
                     Message = $"Processing file {processedFiles} of {totalFiles}...",
                     CurrentFile = file.Name,
+                    CurrentFileSize = file.Length,
                     OverallProgress = (double)processedFiles / totalFiles,
                     FolderProgress = (double)processedFilesInFolder / filesInCurrentFolder,
                     CurrentFilePath = file.FullName,

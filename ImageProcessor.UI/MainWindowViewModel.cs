@@ -67,7 +67,33 @@ public partial class MainWindowViewModel : ObservableObject
     private string _currentFolderName = string.Empty;
 
     [ObservableProperty]
+    private string _currentFile = string.Empty;
+
+    [ObservableProperty]
+    private long _currentFileSize;
+
+    [ObservableProperty]
     private int _filesInCurrentFolder;
+
+    public string HumanReadableCurrentFileSize
+    {
+        get
+        {
+            if (CurrentFileSize == 0)
+                return string.Empty;
+
+            string[] sizes = { "B", "KB", "MB", "GB", "TB" };
+            int order = 0;
+            double size = CurrentFileSize;
+            while (size >= 1024 && order < sizes.Length - 1)
+            {
+                order++;
+                size /= 1024;
+            }
+
+            return $"({size:0.##} {sizes[order]})";
+        }
+    }
 
     [ObservableProperty]
     private double? _folderSpaceSaving;
@@ -255,6 +281,10 @@ public partial class MainWindowViewModel : ObservableObject
                 FilesInCurrentFolder = update.FilesInCurrentFolder.Value;
             }
 
+            CurrentFile = update.CurrentFile;
+            CurrentFileSize = update.CurrentFileSize;
+            OnPropertyChanged(nameof(HumanReadableCurrentFileSize));
+
             if (!string.IsNullOrEmpty(update.CurrentFilePath))
             {
                 _currentInputSubFolder = Path.GetDirectoryName(update.CurrentFilePath) ?? string.Empty;
@@ -280,6 +310,8 @@ public partial class MainWindowViewModel : ObservableObject
                 IsProcessing = false;
                 ImagePreview = null;
                 CurrentFolderName = string.Empty;
+                CurrentFile = string.Empty;
+                CurrentFileSize = 0;
                 FilesInCurrentFolder = 0;
                 FolderProgressBarValue = 0;
                 FolderSpaceSaving = null;
