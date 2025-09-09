@@ -75,6 +75,9 @@ public partial class MainWindowViewModel : ObservableObject
     [ObservableProperty]
     private int _filesInCurrentFolder;
 
+    [ObservableProperty]
+    private int _processedFilesInCurrentFolder; // Make it observable
+
     public string HumanReadableCurrentFileSize
     {
         get
@@ -92,6 +95,46 @@ public partial class MainWindowViewModel : ObservableObject
             }
 
             return $"({size:0.##} {sizes[order]})";
+        }
+    }
+
+    public string HumanReadableFolderOriginalSize // New property
+    {
+        get
+        {
+            if (FolderOriginalSize == 0)
+                return string.Empty;
+
+            string[] sizes = { "B", "KB", "MB", "GB", "TB" };
+            int order = 0;
+            double size = FolderOriginalSize;
+            while (size >= 1024 && order < sizes.Length - 1)
+            {
+                order++;
+                size /= 1024;
+            }
+
+            return $"({size:0.##} {sizes[order]} => ";
+        }
+    }
+
+    public string HumanReadableFolderConvertedSize // New property
+    {
+        get
+        {
+            if (FolderConvertedSize == 0)
+                return string.Empty;
+
+            string[] sizes = { "B", "KB", "MB", "GB", "TB" };
+            int order = 0;
+            double size = FolderConvertedSize;
+            while (size >= 1024 && order < sizes.Length - 1)
+            {
+                order++;
+                size /= 1024;
+            }
+
+            return $"{size:0.##} {sizes[order]})";
         }
     }
 
@@ -295,6 +338,13 @@ public partial class MainWindowViewModel : ObservableObject
                 FilesInCurrentFolder = update.FilesInCurrentFolder.Value;
             }
 
+            if (update.ProcessedFilesInCurrentFolder.HasValue)
+            {
+                ProcessedFilesInCurrentFolder = update.ProcessedFilesInCurrentFolder.Value;
+            }
+
+            Debug.WriteLine($"Processed {ProcessedFilesInCurrentFolder} of {FilesInCurrentFolder} files in current folder.");
+
             CurrentFile = update.CurrentFile;
             CurrentFileSize = update.CurrentFileSize;
             OnPropertyChanged(nameof(HumanReadableCurrentFileSize));
@@ -377,7 +427,7 @@ public partial class MainWindowViewModel : ObservableObject
         if (imagePath.EndsWith(".avif", StringComparison.OrdinalIgnoreCase))
         {
             ImagePreview = null;
-            PreviewErrorMessage = "Vista previa no disponible para archivos AVIF."; // Set new property
+            PreviewErrorMessage = "Preview not available for AVIF files."; // Set new property
             return;
         }
 
@@ -518,11 +568,13 @@ public partial class MainWindowViewModel : ObservableObject
     partial void OnFolderOriginalSizeChanged(long value)
     {
         OnPropertyChanged(nameof(FolderSpaceSavingInMB));
+        OnPropertyChanged(nameof(HumanReadableFolderOriginalSize)); // Add this
     }
 
     partial void OnFolderConvertedSizeChanged(long value)
     {
         OnPropertyChanged(nameof(FolderSpaceSavingInMB));
+        OnPropertyChanged(nameof(HumanReadableFolderConvertedSize)); // Add this
     }
 
     partial void OnTotalOriginalSizeChanged(long value)

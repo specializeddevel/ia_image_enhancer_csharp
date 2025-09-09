@@ -92,4 +92,9 @@ public class ProcessingUpdate
     /// The size of the file currently being processed, in bytes.
     /// </summary>
     public long CurrentFileSize { get; set; }
+
+    /// <summary>
+    /// The number of files processed in the current folder.
+    /// </summary>
+    public int? ProcessedFilesInCurrentFolder { get; set; }
 }

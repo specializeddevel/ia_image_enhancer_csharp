@@ -109,7 +109,8 @@ public class ImageProcessorService
                         CurrentFolderName = new DirectoryInfo(lastDirectory).Name,
                         FilesInCurrentFolder = filesInFolder,
                         OverallProgress = (double)processedFiles / totalFiles, // Keep overall progress updated
-                        FolderSpaceSaving = null
+                        ProcessedFilesInCurrentFolder = 0,
+                    FolderSpaceSaving = null
                     });
                     await Task.Delay(500, cancellationToken); // Give user time to read folder name
                 }
@@ -208,6 +209,7 @@ public class ImageProcessorService
                     CurrentFilePath = file.FullName,
                     CurrentFolderName = new DirectoryInfo(directoryName).Name,
                     FilesInCurrentFolder = filesInCurrentFolder,
+                    ProcessedFilesInCurrentFolder = processedFilesInFolder,
                     FolderSpaceSaving = spaceSaving,
                     FolderOriginalSize = sizes.originalSize,
                     FolderConvertedSize = sizes.convertedSize,

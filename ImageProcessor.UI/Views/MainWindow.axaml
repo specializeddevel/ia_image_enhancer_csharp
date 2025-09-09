@@ -114,10 +114,18 @@
                     </Grid>
 
                     
-                    <Grid ColumnDefinitions="Auto,*,Auto" IsVisible="{Binding IsProcessing}">
+                    <Grid ColumnDefinitions="Auto,*,Auto,Auto,Auto" IsVisible="{Binding IsProcessing}">
                         <TextBlock Grid.Column="0" Text="Folder: " FontWeight="Bold"/>
                         <TextBlock Grid.Column="1" Text="{Binding CurrentFolderName}" HorizontalAlignment="Left" TextTrimming="CharacterEllipsis"/>
-                        <TextBlock Grid.Column="2" Text="{Binding FilesInCurrentFolder, StringFormat=({0} files)}" HorizontalAlignment="Right"/>
+                        <TextBlock Grid.Column="2" HorizontalAlignment="Right">
+                            <Run Text="("/>
+                            <Run Text="{Binding ProcessedFilesInCurrentFolder}"/>
+                            <Run Text="/"/>
+                            <Run Text="{Binding FilesInCurrentFolder}"/>
+                            <Run Text=" files)"/>
+                        </TextBlock>
+                        <TextBlock Grid.Column="3" Text="{Binding HumanReadableFolderOriginalSize}" HorizontalAlignment="Right" Classes="Monospace"/>
+                        <TextBlock Grid.Column="4" Text="{Binding HumanReadableFolderConvertedSize}" HorizontalAlignment="Right" Classes="Monospace"/>
                     </Grid>
 
                     <Grid ColumnDefinitions="Auto,*,Auto" IsVisible="{Binding IsProcessing}">
