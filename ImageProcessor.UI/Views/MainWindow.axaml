@@ -126,6 +126,13 @@
                         <TextBlock Grid.Column="2" Text="{Binding HumanReadableCurrentFileSize}" HorizontalAlignment="Right"/>
                     </Grid>
 
+                    <!-- New TextBlock for preview error message -->
+                    <TextBlock Text="{Binding PreviewErrorMessage}"
+                               Foreground="Red"
+                               TextWrapping="Wrap"
+                               IsVisible="{Binding PreviewErrorMessage, Converter={x:Static ObjectConverters.IsNotNull}}"
+                               Margin="0,5,0,0"/>
+
                     <TextBlock Text="{Binding StatusMessage}" TextWrapping="Wrap" Height="40"/>
 
                   <StackPanel Orientation="Horizontal" Spacing="10" Margin="0,5,0,0" IsVisible="{Binding IsProcessing}" HorizontalAlignment="Center">

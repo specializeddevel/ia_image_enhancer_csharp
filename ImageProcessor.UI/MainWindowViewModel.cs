@@ -137,6 +137,12 @@ public partial class MainWindowViewModel : ObservableObject
     [ObservableProperty]
     private string? _errorMessage;
 
+    [ObservableProperty]
+    private string? _previewErrorMessage;
+
+    [ObservableProperty]
+    private bool _canProcess = true; // Default to true, assume dependencies are fine until checked
+
     public MainWindowViewModel()
     {
         _processorService = new ImageProcessorService();
@@ -164,6 +170,12 @@ public partial class MainWindowViewModel : ObservableObject
         if (_processorService.DependenciesNotFound.Any())
         {
             ErrorMessage = $"One or more required dependencies were not found: {string.Join(", ", _processorService.DependenciesNotFound)}. Please make sure they are in the application's directory.";
+            CanProcess = false; // Disable processing if dependencies are missing
+        }
+        else
+        {
+            ErrorMessage = null; // Clear error if dependencies are found
+            CanProcess = true; // Enable processing
         }
     }
 
@@ -244,6 +256,8 @@ public partial class MainWindowViewModel : ObservableObject
         TotalSpaceSaving = 0;
         TotalConvertedSize = 0;
         TotalOriginalSize = 0;
+        ErrorMessage = null; // Clear any previous general error message
+        PreviewErrorMessage = null; // Clear any previous preview error message
         _cancellationTokenSource = new CancellationTokenSource();
 
         var options = new ProcessingOptions(
@@ -326,6 +340,10 @@ public partial class MainWindowViewModel : ObservableObject
                 _currentOutputSubFolder = string.Empty;
                 CancelProcessingCommand.NotifyCanExecuteChanged();
                 StartProcessingCommand.NotifyCanExecuteChanged();
+
+                // Clear error messages and reset status
+                ErrorMessage = null;
+                StatusMessage = "Ready";
             }
         });
 
@@ -351,6 +369,18 @@ public partial class MainWindowViewModel : ObservableObject
 
     private async Task LoadImagePreviewAsync(string imagePath)
     {
+        // Clear any previous preview error message
+        PreviewErrorMessage = null; // Use the new property
+        ErrorMessage = null; // Clear general error message too, in case it was set by a previous preview attempt
+
+        // Do not attempt to load AVIF files for preview
+        if (imagePath.EndsWith(".avif", StringComparison.OrdinalIgnoreCase))
+        {
+            ImagePreview = null;
+            PreviewErrorMessage = "Vista previa no disponible para archivos AVIF."; // Set new property
+            return;
+        }
+
         try
         {
             var bitmap = await Task.Run(() =>
@@ -367,6 +397,7 @@ public partial class MainWindowViewModel : ObservableObject
         {
             Debug.WriteLine($"Failed to load preview image: {ex.Message}");
             ImagePreview = null;
+            PreviewErrorMessage = $"No se pudo cargar la vista previa para '{Path.GetFileName(imagePath)}': {ex.Message}"; // Set new property
         }
     }
 
@@ -376,7 +407,7 @@ public partial class MainWindowViewModel : ObservableObject
                !string.IsNullOrEmpty(InputFolder) && 
                !string.IsNullOrEmpty(OutputFolder) &&
                (ApplyUpscale || ConvertToWebP || ConvertToAvif) &&
-               ErrorMessage is null;
+               CanProcess;
     }
 
     [RelayCommand(CanExecute = nameof(CanCancelProcessing))]
@@ -408,19 +439,11 @@ public partial class MainWindowViewModel : ObservableObject
     partial void OnApplyUpscaleChanged(bool value) => StartProcessingCommand.NotifyCanExecuteChanged();
     partial void OnConvertToWebPChanged(bool value)
     {
-        if (value)
-        {
-            ConvertToAvif = false;
-        }
         StartProcessingCommand.NotifyCanExecuteChanged();
     }
 
     partial void OnConvertToAvifChanged(bool value)
     {
-        if (value)
-        {
-            ConvertToWebP = false;
-        }
         StartProcessingCommand.NotifyCanExecuteChanged();
     }
 

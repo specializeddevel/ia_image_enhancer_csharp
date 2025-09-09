@@ -256,6 +256,7 @@ public class ImageProcessorService
 
         string outputFileNameBase = Path.GetFileNameWithoutExtension(file.Name);
         string improvedPngPath = Path.Combine(targetOutputFolder, $"{outputFileNameBase}_improved.png");
+        string intermediateWebPPath = Path.Combine(targetOutputFolder, $"{outputFileNameBase}_intermediate.webp");
         string finalWebPPath = Path.Combine(targetOutputFolder, $"{outputFileNameBase}_final.webp");
         string finalAvifPath = Path.Combine(targetOutputFolder, $"{outputFileNameBase}_final.avif");
         long finalSize = 0;
@@ -267,7 +268,7 @@ public class ImageProcessorService
                 .Replace("{inputFile}", $"\"{file.FullName}\"")
                 .Replace("{outputFile}", $"\"{improvedPngPath}\"")
                 .Replace("{modelName}", options.Model)
-                .Replace("{scale}", "4") // Future improvement: make scale configurable in options
+                .Replace("{scale}", "4") 
                 .Replace("{modelsPath}", $"\"{_modelsPath}\"");
 
             await RunProcessAsync(_realesrganExecutablePath, arguments, cancellationToken);
@@ -275,7 +276,22 @@ public class ImageProcessorService
 
         string sourceForConversion = options.ApplyUpscale && File.Exists(improvedPngPath) ? improvedPngPath : file.FullName;
 
-        if (options.ConvertToWebP)
+        if (options.ConvertToWebP && options.ConvertToAvif)
+        {
+            await RunProcessAsync(_cwebpExecutablePath, $"-q 80 \"{sourceForConversion}\" -o \"{intermediateWebPPath}\"", cancellationToken);
+
+            if (File.Exists(intermediateWebPPath))
+            {
+                await RunProcessAsync(_ffmpegExecutablePath, $"-y -i \"{intermediateWebPPath}\" -c:v libaom-av1 -still-picture 1 -crf 35 -b:v 0 -cpu-used 4 -threads 8 \"{finalAvifPath}\"", cancellationToken);
+                if (File.Exists(finalAvifPath))
+                {
+                    finalSize = new FileInfo(finalAvifPath).Length;
+                    finalPath = finalAvifPath;
+                }
+                File.Delete(intermediateWebPPath);
+            }
+        }
+        else if (options.ConvertToWebP)
         {
             await RunProcessAsync(_cwebpExecutablePath, $"-q 80 \"{sourceForConversion}\" -o \"{finalWebPPath}\"", cancellationToken);
             if (File.Exists(finalWebPPath))
@@ -286,7 +302,6 @@ public class ImageProcessorService
         }
         else if (options.ConvertToAvif)
         {
-            // Using ffmpeg arguments as requested, with -y to overwrite without asking.
             await RunProcessAsync(_ffmpegExecutablePath, $"-y -i \"{sourceForConversion}\" -c:v libaom-av1 -still-picture 1 -crf 35 -b:v 0 -cpu-used 4 -threads 8 \"{finalAvifPath}\"", cancellationToken);
             if (File.Exists(finalAvifPath))
             {
@@ -300,7 +315,6 @@ public class ImageProcessorService
             finalPath = improvedPngPath;
         }
 
-        // Delete the intermediate upscaled file if it exists and a conversion was made
         if (options.ApplyUpscale && (options.ConvertToWebP || options.ConvertToAvif) && File.Exists(improvedPngPath))
         {
             File.Delete(improvedPngPath);
