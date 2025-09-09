@@ -29,6 +29,9 @@ public partial class MainWindowViewModel : ObservableObject
     private string _outputFolder = string.Empty;
 
     [ObservableProperty]
+    private bool _useInputFolderAsOutput;
+
+    [ObservableProperty]
     private bool _processSubfolders;
 
     [ObservableProperty]
@@ -477,7 +480,25 @@ public partial class MainWindowViewModel : ObservableObject
         return IsProcessing;
     }
 
-    partial void OnInputFolderChanged(string value) => StartProcessingCommand.NotifyCanExecuteChanged();
+    public bool CanSelectSameOutputFolder => !string.IsNullOrEmpty(InputFolder);
+
+    partial void OnUseInputFolderAsOutputChanged(bool value)
+    {
+        if (value)
+        {
+            OutputFolder = InputFolder;
+        }
+    }
+
+    partial void OnInputFolderChanged(string value)
+    {
+        if (UseInputFolderAsOutput)
+        {
+            OutputFolder = value;
+        }
+        OnPropertyChanged(nameof(CanSelectSameOutputFolder));
+        StartProcessingCommand.NotifyCanExecuteChanged();
+    }
     partial void OnOutputFolderChanged(string value) => StartProcessingCommand.NotifyCanExecuteChanged();
     partial void OnIsProcessingChanged(bool value)
     {

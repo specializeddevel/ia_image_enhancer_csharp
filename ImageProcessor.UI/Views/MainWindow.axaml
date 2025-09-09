@@ -56,14 +56,16 @@
                         <TextBlock Text="{Binding ErrorMessage}" TextWrapping="Wrap" Foreground="White"/>
                     </Border>
 
-                    <Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto" ColumnSpacing="10" RowSpacing="10" IsEnabled="{Binding IsUiEnabled}">
+                    <Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto,Auto" ColumnSpacing="10" RowSpacing="10" IsEnabled="{Binding IsUiEnabled}">
                         <TextBlock Grid.Row="0" Grid.Column="0" Text="Input Folder:" Classes="label"/>
                         <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding InputFolder}" IsReadOnly="True"/>
                         <Button Grid.Row="0" Grid.Column="2" Content="Browse..." Classes="browse" Command="{Binding BrowseInputFolderCommand}" CommandParameter="{Binding $parent[Window]}"/>
 
                         <TextBlock Grid.Row="1" Grid.Column="0" Text="Output Folder:" Classes="label"/>
-                        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding OutputFolder}" IsReadOnly="True"/>
-                        <Button Grid.Row="1" Grid.Column="2" Content="Browse..." Classes="browse" Command="{Binding BrowseOutputFolderCommand}" CommandParameter="{Binding $parent[Window]}"/>
+                        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding OutputFolder}" IsReadOnly="True" IsEnabled="{Binding !UseInputFolderAsOutput}"/>
+                        <Button Grid.Row="1" Grid.Column="2" Content="Browse..." Classes="browse" Command="{Binding BrowseOutputFolderCommand}" CommandParameter="{Binding $parent[Window]}" IsEnabled="{Binding !UseInputFolderAsOutput}"/>
+
+                        <CheckBox Grid.Row="2" Grid.Column="1" Content="Use input folder as output folder" IsChecked="{Binding UseInputFolderAsOutput}" IsEnabled="{Binding CanSelectSameOutputFolder}"/>
                     </Grid>
 
                     <Separator Margin="0,5"/>
