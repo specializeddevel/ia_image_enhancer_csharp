@@ -5,7 +5,7 @@
   <img src="https://img.shields.io/badge/UI-Avalonia-purple" alt="Avalonia UI" />
   <img src="https://img.shields.io/badge/API-ASP.NET%20Core-blueviolet" alt="ASP.NET Core" />
   <img src="https://img.shields.io/badge/platform-windows%20%7C%20macos%20%7C%20linux-lightgrey.svg" alt="Platforms" />
-  <a href="https://github.com/raulb/ia_image_enhancer_csharp/blob/main/LICENSE.md">
+  <a href="https://github.com/specializeddevel/ia_image_enhancer_csharp/blob/main/LICENSE.md">
     <img src="https://img.shields.io/github/license/specializeddevel/ia_image_enhancer_csharp" alt="License" />
   </a>
 </p>
@@ -45,8 +45,11 @@ A cross-platform desktop application and web API for enhancing images using Real
 - **Multiple AI Models:** Choose from a selection of pre-configured Real-ESRGAN models for different types of images (e.g., photos, anime).
 - **Modern Format Conversion:** Convert your images to high-efficiency formats like `.webp` and `.avif` to save disk space.
 - **Batch Processing:** Process entire folders of images, including subfolders, in one go.
+- **Detailed Progress Display:** Track overall progress and per-folder progress with details on file counts and space savings.
+- **Same Folder Processing:** Option to save processed files in the same directory as the source files.
 - **Cross-Platform:** Runs on Windows, macOS, and Linux.
 - **User-Friendly GUI:** A simple and intuitive graphical interface built with Avalonia UI.
+- **Dynamic UI:** Controls are hidden during processing to provide a cleaner and more focused user experience.
 - **Web API:** A headless web API for programmatic access to the image processing functionality.
 - **Dark & Light Themes:** Switch between themes to match your preference.
 - **Optional Source File Deletion:** Automatically delete original files after processing to save space.
@@ -95,75 +98,17 @@ Starts a new image processing job. The request body must be a JSON object with t
 }
 ```
 
-**Example `curl` command:**
-
-```bash
-curl -X POST "https://localhost:7131/api/Processing/start" -H "Content-Type: application/json" -d "{\"inputFolder\": \"C:\\\\path\\\\to\\\\your\\\\images\", \"outputFolder\": \"C:\\\\path\\\\to\\\\output\", \"model\": \"realesrgan-x4plus\", \"processSubfolders\": true, \"convertToWebP\": true, \"applyUpscale\": true}" --insecure
-```
-
-*Note: The `--insecure` flag is used here to bypass SSL certificate verification for the self-signed development certificate. On Windows Command Prompt, you may need to adjust the escaping of quotes and backslashes.*
-
-**Example Response:**
-
-```json
-{
-  "jobId": "a1b2c3d4-e5f6-7890-1234-567890abcdef"
-}
-```
-
 ### `GET /api/Processing/{jobId}/status`
 
 Gets the current status of a processing job.
-
-**Example `curl` command:**
-
-```bash
-curl "https://localhost:7131/api/Processing/a1b2c3d4-e5f6-7890-1234-567890abcdef/status" --insecure
-```
-
-**Example Response:**
-
-```json
-{
-  "id": "a1b2c3d4-e5f6-7890-1234-567890abcdef",
-  "status": "Running",
-  "lastUpdate": {
-    "message": "Processing file 7 of 25...",
-    "currentFile": "image07.jpg",
-    "overallProgress": 0.28
-  }
-}
-```
 
 ### `GET /api/Processing/{jobId}/history`
 
 Gets the complete progress history of a processing job.
 
-**Example `curl` command:**
-
-```bash
-curl "https://localhost:7131/api/Processing/a1b2c3d4-e5f6-7890-1234-567890abcdef/history" --insecure
-```
-
-**Example Response:**
-
-```json
-[
-  {
-    "message": "Found 25 images in 3 folders."
-  },
-  {
-    "message": "Processing folder...",
-    "currentFolderName": "Subfolder1"
-  },
-  {
-    "message": "Processing file 1 of 25...",
-    "currentFile": "image01.jpg"
-  }
-]
-```
-
 ## Screenshots
+
+*(Note: The screenshot below is outdated and will be updated soon to reflect the latest UI changes.)*
 
 ![IMAGE](https://github.com/user-attachments/assets/65fad462-f0ec-4f5e-b2a6-9ca15cb5af77)
 
@@ -171,16 +116,18 @@ curl "https://localhost:7131/api/Processing/a1b2c3d4-e5f6-7890-1234-567890abcdef
 
 The main window provides several options to customize the image processing workflow.
 
-| Option                | Description                                                                                                                            |
-| --------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
-| **AI Model**          | Selects the Real-ESRGAN AI model to use for the upscaling process. Different models are trained for specific types of content (e.g., photos, anime). |
-| **Apply Upscale**     | If checked, the AI-powered upscaling process is applied to the images. If unchecked, the application will only perform format conversion. |
-| **Convert to WebP**   | If checked, the final image will be converted to the `.webp` format. This option is mutually exclusive with `Convert to Avif`.          |
-| **Convert to Avif**   | If checked, the final image will be converted to the `.avif` format using `ffmpeg`. This option is mutually exclusive with `Convert to WebP`. |
-| **Process Subfolders**| If checked, the application will search for images in all subdirectories of the selected input folder.                                  |
-| **Delete Source File**| **(Use with caution!)** If checked, the original source image will be permanently deleted after it has been successfully processed.      |
-| **Include WebP Files**| If checked, existing `.webp` files in the source folder will be included in the processing queue.                                      |
-| **Include Avif Files**| If checked, existing `.avif` files in the source folder will be included in the processing queue.                                      |
+| Option                               | Description                                                                                                                            |
+| ------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------- |
+| **Use input folder as output folder**| If checked, the output files will be saved in the same folder as the input files. This disables the output folder selection.             |
+| **AI Model**                         | Selects the Real-ESRGAN AI model to use for the upscaling process. Different models are trained for specific types of content.         |
+| **Show Preview**                     | A `ToggleSwitch` to show or hide the image preview panel.                                                                              |
+| **Apply 4x Upscale**                 | If checked, the AI-powered upscaling process is applied to the images. If unchecked, the application will only perform format conversion. |
+| **Convert to .WebP**                 | If checked, the final image will be converted to the `.webp` format.                                                                   |
+| **Convert to .AVIF**                 | If checked, the final image will be converted to the `.avif` format using `ffmpeg`.                                                    |
+| **Process Subfolders**               | If checked, the application will search for images in all subdirectories of the selected input folder.                                  |
+| **Include .WebP Files**              | If checked, existing `.webp` files in the source folder will be included in the processing queue.                                      |
+| **Include .Avif Files**              | If checked, existing `.avif` files in the source folder will be included in the processing queue.                                      |
+| **Delete Source Files**              | **(Use with caution!)** If checked, the original source image will be permanently deleted after it has been successfully processed.      |
 
 ## Prerequisites and Downloads
 >
@@ -262,22 +209,13 @@ This application relies on external command-line tools. These must be placed in 
 
 You must have a folder named `models` in the application's root directory. This folder must contain the `.bin` and `.param` files for the Real-ESRGAN models you intend to use.
 
-### 3. Pre-compiled Application (Optional)
-
-> 💡 **Note**  
-> I will soon provide links to download ZIP files containing the compiled binaries for each platform (Windows, macOS, Linux), along with all the necessary dependencies.
-
-- **Windows:** (Link will be here)
-- **macOS:** (Link will be here)
-- **Linux:** (Link will be here)
-
 ## Getting Started
 
 1. **Clone the repository:**
 
     ```bash
-    git clone https://github.com/your-username/image_enhancer_csharp.git
-    cd image_enhancer_csharp
+    git clone https://github.com/specializeddevel/ia_image_enhancer_csharp.git
+    cd ia_image_enhancer_csharp
     ```
 
 2. **Add Required Files:**
@@ -312,6 +250,8 @@ You must have a folder named `models` in the application's root directory. This 
 ## Contributing
 
 Contributions are welcome! If you have a feature request, bug report, or pull request, please feel free to open an issue or submit a PR.
+
+We follow a feature-branch workflow with Pull Requests for merging changes into the `main` branch.
 
 ## License
 
