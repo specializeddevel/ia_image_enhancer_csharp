@@ -78,7 +78,7 @@
                     <Separator Margin="0,5"/>
 
                     <TextBlock Text="Processing Options" FontWeight="Bold" IsVisible="{Binding IsUiEnabled}"/>
-                    <StackPanel Orientation="Horizontal" Spacing="10" IsVisible="{Binding IsUiEnabled}">
+                    <StackPanel Orientation="Horizontal" Spacing="10" >
                         <TextBlock Text="Show Preview" VerticalAlignment="Center"/>
                         <ToggleSwitch IsChecked="{Binding ShowPreview}"/>
                     </StackPanel>
