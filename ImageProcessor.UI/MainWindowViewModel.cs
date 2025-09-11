@@ -68,6 +68,9 @@ public partial class MainWindowViewModel : ObservableObject
     private string _statusMessage = "Ready";
 
     [ObservableProperty]
+    private string _totalQueueSummary = string.Empty;
+
+    [ObservableProperty]
     private string _currentFolderName = string.Empty;
 
     [ObservableProperty]
@@ -88,17 +91,7 @@ public partial class MainWindowViewModel : ObservableObject
         {
             if (CurrentFileSize == 0)
                 return string.Empty;
-
-            string[] sizes = { "B", "KB", "MB", "GB", "TB" };
-            int order = 0;
-            double size = CurrentFileSize;
-            while (size >= 1024 && order < sizes.Length - 1)
-            {
-                order++;
-                size /= 1024;
-            }
-
-            return $"({size:0.##} {sizes[order]})";
+            return $"({FormatBytes(CurrentFileSize)})";
         }
     }
 
@@ -108,17 +101,7 @@ public partial class MainWindowViewModel : ObservableObject
         {
             if (FolderOriginalSize == 0)
                 return string.Empty;
-
-            string[] sizes = { "B", "KB", "MB", "GB", "TB" };
-            int order = 0;
-            double size = FolderOriginalSize;
-            while (size >= 1024 && order < sizes.Length - 1)
-            {
-                order++;
-                size /= 1024;
-            }
-
-            return $"({size:0.##} {sizes[order]} => ";
+            return $"({FormatBytes(FolderOriginalSize)} => ";
         }
     }
 
@@ -128,17 +111,7 @@ public partial class MainWindowViewModel : ObservableObject
         {
             if (FolderConvertedSize == 0)
                 return string.Empty;
-
-            string[] sizes = { "B", "KB", "MB", "GB", "TB" };
-            int order = 0;
-            double size = FolderConvertedSize;
-            while (size >= 1024 && order < sizes.Length - 1)
-            {
-                order++;
-                size /= 1024;
-            }
-
-            return $"{size:0.##} {sizes[order]})";
+            return $"{FormatBytes(FolderConvertedSize)})";
         }
     }
 
@@ -303,6 +276,7 @@ public partial class MainWindowViewModel : ObservableObject
     {
         IsProcessing = true;
         StatusMessage = "Starting...";
+        TotalQueueSummary = string.Empty;
         CurrentFolderName = string.Empty;
         FilesInCurrentFolder = 0;
         ProgressBarValue = 0;
@@ -335,6 +309,11 @@ public partial class MainWindowViewModel : ObservableObject
             StatusMessage = update.Message;
             ProgressBarValue = update.OverallProgress * 100;
             FolderProgressBarValue = update.FolderProgress * 100;
+
+            if (update.TotalQueueFileCount.HasValue && update.TotalQueueSizeInBytes.HasValue)
+            {
+                TotalQueueSummary = $"{update.TotalQueueFileCount.Value} files to process ({FormatBytes(update.TotalQueueSizeInBytes.Value)})";
+            }
 
             FolderSpaceSaving = update.FolderSpaceSaving;
             FolderOriginalSize = update.FolderOriginalSize;
@@ -395,6 +374,7 @@ public partial class MainWindowViewModel : ObservableObject
                 FolderSpaceSaving = null;
                 FolderOriginalSize = 0;
                 FolderConvertedSize = 0;
+                TotalQueueSummary = string.Empty;
 
                 TotalSpaceSaving = TotalSpaceSaving; // Keep the last calculated value
                 TotalConvertedSize = 0; 
@@ -669,5 +649,19 @@ public partial class MainWindowViewModel : ObservableObject
             Debug.WriteLine($"Error opening folder: {ex.Message}");
             // Consider notifying the user in a more visible way
         }
+    }
+
+    private static string FormatBytes(long bytes)
+    {
+        if (bytes == 0) return "0 B";
+        string[] sizes = { "B", "KB", "MB", "GB", "TB" };
+        int order = 0;
+        double size = bytes;
+        while (size >= 1024 && order < sizes.Length - 1)
+        {
+            order++;
+            size /= 1024;
+        }
+        return $"{size:0.##} {sizes[order]}";
     }
 }

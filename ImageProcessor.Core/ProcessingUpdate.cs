@@ -97,4 +97,14 @@ public class ProcessingUpdate
     /// The number of files processed in the current folder.
     /// </summary>
     public int? ProcessedFilesInCurrentFolder { get; set; }
+
+    /// <summary>
+    /// The total size in bytes of all files found in the queue to be processed.
+    /// </summary>
+    public long? TotalQueueSizeInBytes { get; set; }
+
+    /// <summary>
+    /// The total number of files found in the queue to be processed.
+    /// </summary>
+    public int? TotalQueueFileCount { get; set; }
 }

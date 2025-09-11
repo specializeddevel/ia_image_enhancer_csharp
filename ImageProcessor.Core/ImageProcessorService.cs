@@ -72,6 +72,8 @@ public class ImageProcessorService
                 return logEntries;
             }
 
+            long totalQueueSizeInBytes = imageFiles.Sum(f => f.Length);
+
             var filesByDirectory = imageFiles.GroupBy(f => f.DirectoryName!)
                                              .ToDictionary(g => g.Key, g => g.ToList());
 
@@ -84,7 +86,12 @@ public class ImageProcessorService
             int processedFilesInFolder = 0;
             var totalSize = folderSizes["total"];            
 
-            progress.Report(new ProcessingUpdate { Message = $"Found {totalFiles} images in {filesByDirectory.Count} folders." });
+            progress.Report(new ProcessingUpdate 
+            { 
+                Message = $"Found {totalFiles} images in {filesByDirectory.Count} folders.",
+                TotalQueueSizeInBytes = totalQueueSizeInBytes,
+                TotalQueueFileCount = totalFiles
+            });
             await Task.Delay(1000, cancellationToken); // Give user time to read the message
 
             foreach (var file in imageFiles)
