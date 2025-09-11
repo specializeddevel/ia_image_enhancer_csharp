@@ -71,7 +71,9 @@ public partial class MainWindowViewModel : ObservableObject
     private string _totalQueueSummary = string.Empty;
 
     [ObservableProperty]
-    private string _currentFolderName = string.Empty;
+    private string _currentFolderSummary = string.Empty;
+
+    
 
     [ObservableProperty]
     private string _currentFile = string.Empty;
@@ -277,7 +279,7 @@ public partial class MainWindowViewModel : ObservableObject
         IsProcessing = true;
         StatusMessage = "Starting...";
         TotalQueueSummary = string.Empty;
-        CurrentFolderName = string.Empty;
+        CurrentFolderSummary = string.Empty;
         FilesInCurrentFolder = 0;
         ProgressBarValue = 0;
         FolderProgressBarValue = 0;
@@ -315,6 +317,11 @@ public partial class MainWindowViewModel : ObservableObject
                 TotalQueueSummary = $"{update.TotalQueueFileCount.Value} files to process ({FormatBytes(update.TotalQueueSizeInBytes.Value)})";
             }
 
+            if (update.CurrentFolderName is not null && update.CurrentFolderTotalSizeInBytes.HasValue)
+            {
+                CurrentFolderSummary = $"{update.CurrentFolderName} - ({FormatBytes(update.CurrentFolderTotalSizeInBytes.Value)})";
+            }
+
             FolderSpaceSaving = update.FolderSpaceSaving;
             FolderOriginalSize = update.FolderOriginalSize;
             FolderConvertedSize = update.FolderConvertedSize;
@@ -322,10 +329,6 @@ public partial class MainWindowViewModel : ObservableObject
             TotalOriginalSize = update.TotalOriginalSize;
             TotalConvertedSize = update.TotalConvertedSize;
 
-            if (update.CurrentFolderName is not null)
-            {
-                CurrentFolderName = update.CurrentFolderName;
-            }
             if (update.FilesInCurrentFolder is not null)
             {
                 FilesInCurrentFolder = update.FilesInCurrentFolder.Value;
@@ -366,7 +369,7 @@ public partial class MainWindowViewModel : ObservableObject
             {
                 IsProcessing = false;
                 ImagePreview = null;
-                CurrentFolderName = string.Empty;
+                CurrentFolderSummary = string.Empty;
                 CurrentFile = string.Empty;
                 CurrentFileSize = 0;
                 FilesInCurrentFolder = 0;
