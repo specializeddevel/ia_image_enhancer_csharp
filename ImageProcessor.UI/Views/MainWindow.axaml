@@ -14,29 +14,10 @@
         <vm:MainWindowViewModel/>
     </Design.DataContext>
 
-    <Window.Styles>
-      <Style Selector="TextBlock.Monospace">
-        <Setter Property="FontFamily" Value="Cascadia Mono, Consolas, monospace"/>
-      </Style>
-        <Style Selector="TextBlock.h1">
-            <Setter Property="FontSize" Value="24"/>
-            <Setter Property="FontWeight" Value="Bold"/>
-        </Style>
-        <Style Selector="TextBlock.label">
-            <Setter Property="VerticalAlignment" Value="Center"/>
-        </Style>
-        <Style Selector="Button.browse">
-            <Setter Property="MinWidth" Value="80"/>
-        </Style>
-        <Style Selector="WrapPanel > CheckBox">
-            <Setter Property="Margin" Value="0,0,10,5"/>
-        </Style>
-    </Window.Styles>
-
     <Grid RowDefinitions="Auto,*" Margin="15">
 
         <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="5" HorizontalAlignment="Right">
-            <TextBlock Text="Dark Theme" VerticalAlignment="Center"/>
+            <TextBlock Text="Dark Theme"/>
             <ToggleSwitch IsChecked="{Binding IsDarkMode}" />
             <Button Content="⚙️" Command="{Binding OpenSettingsCommand}" CommandParameter="{Binding $parent[Window]}" ToolTip.Tip="Settings" Margin="5,0,0,0"/>
         </StackPanel>
@@ -57,13 +38,13 @@
                     </Border>
 
                     <Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto,Auto" ColumnSpacing="10" RowSpacing="10" IsEnabled="{Binding IsUiEnabled}">
-                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Input Folder:" Classes="label"/>
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Input Folder:"/>
                         <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding InputFolder}" IsReadOnly="True"/>
-                        <Button Grid.Row="0" Grid.Column="2" Content="Browse..." Classes="browse" Command="{Binding BrowseInputFolderCommand}" CommandParameter="{Binding $parent[Window]}"/>
+                        <Button Grid.Row="0" Grid.Column="2" Content="Browse..." Command="{Binding BrowseInputFolderCommand}" CommandParameter="{Binding $parent[Window]}"/>
 
-                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Output Folder:" Classes="label"/>
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Output Folder:"/>
                         <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding OutputFolder}" IsReadOnly="True" IsEnabled="{Binding !UseInputFolderAsOutput}"/>
-                        <Button Grid.Row="1" Grid.Column="2" Content="Browse..." Classes="browse" Command="{Binding BrowseOutputFolderCommand}" CommandParameter="{Binding $parent[Window]}" IsEnabled="{Binding !UseInputFolderAsOutput}"/>
+                        <Button Grid.Row="1" Grid.Column="2" Content="Browse..." Command="{Binding BrowseOutputFolderCommand}" CommandParameter="{Binding $parent[Window]}" IsEnabled="{Binding !UseInputFolderAsOutput}"/>
 
                         <CheckBox Grid.Row="2" Grid.Column="1" Content="Use input folder as output folder" IsChecked="{Binding UseInputFolderAsOutput}" IsEnabled="{Binding CanSelectSameOutputFolder}"/>
                     </Grid>
@@ -71,39 +52,39 @@
                     <Separator Margin="0,5"/>
 
                     <StackPanel Orientation="Horizontal" Spacing="10" IsVisible="{Binding IsUiEnabled}">
-                        <TextBlock Text="AI Model:" Classes="label"/>
+                        <TextBlock Text="AI Model:"/>
                         <ComboBox ItemsSource="{Binding Models}" SelectedItem="{Binding SelectedModel}" MinWidth="200"/>
                     </StackPanel>
 
                     <Separator Margin="0,5"/>
 
-                    <TextBlock Text="Processing Options" FontWeight="Bold" IsVisible="{Binding IsUiEnabled}"/>
+                    <TextBlock Text="Processing Options" Classes="h3" IsVisible="{Binding IsUiEnabled}"/>
                     <StackPanel Orientation="Horizontal" Spacing="10" >
-                        <TextBlock Text="Show Preview" VerticalAlignment="Center"/>
+                        <TextBlock Text="Show Preview"/>
                         <ToggleSwitch IsChecked="{Binding ShowPreview}"/>
                     </StackPanel>
-                    <WrapPanel Orientation="Horizontal" IsVisible="{Binding IsUiEnabled}">
-                        <CheckBox Content="Apply 4x Upscale" IsChecked="{Binding ApplyUpscale}"/>
-                        <CheckBox Content="Convert to .WebP" IsChecked="{Binding ConvertToWebP}"/>
-                        <CheckBox Content="Convert to .AVIF" IsChecked="{Binding ConvertToAvif}"/>
-                        <CheckBox Content="Process Subfolders" IsChecked="{Binding ProcessSubfolders}"/>
-                        <CheckBox Content="Include .WebP Files" IsChecked="{Binding IncludeWebPFiles}"/>
-                        <CheckBox Content="Include .Avif Files" IsChecked="{Binding IncludeAvifFiles}"/>
+                    <WrapPanel Orientation="Horizontal" IsVisible="{Binding IsUiEnabled}" Margin="0,5,0,0">
+                        <CheckBox Content="Apply 4x Upscale" IsChecked="{Binding ApplyUpscale}" Margin="0,0,15,5"/>
+                        <CheckBox Content="Convert to .WebP" IsChecked="{Binding ConvertToWebP}" Margin="0,0,15,5"/>
+                        <CheckBox Content="Convert to .AVIF" IsChecked="{Binding ConvertToAvif}" Margin="0,0,15,5"/>
+                        <CheckBox Content="Process Subfolders" IsChecked="{Binding ProcessSubfolders}" Margin="0,0,15,5"/>
+                        <CheckBox Content="Include .WebP Files" IsChecked="{Binding IncludeWebPFiles}" Margin="0,0,15,5"/>
+                        <CheckBox Content="Include .Avif Files" IsChecked="{Binding IncludeAvifFiles}" Margin="0,0,15,5"/>
                         <CheckBox Content="Delete Source Files" IsChecked="{Binding DeleteSourceFile}" Foreground="Red"/>
                     </WrapPanel>
 
                     <Separator Margin="0,10"/>
 
-                    <TextBlock Text="Processing Status" FontWeight="Bold"/>
+                    <TextBlock Text="Processing Status" Classes="h3"/>
 
                   <Grid ColumnDefinitions="*,Auto,Auto,Auto" IsVisible="{Binding IsProcessing}" VerticalAlignment="Center">
                     <ProgressBar Grid.Column="0" Value="{Binding ProgressBarValue}" Minimum="0" Maximum="100" ShowProgressText="True" Margin="0 1" Height="20"/>
                     <TextBlock Grid.Column="1" IsVisible="{Binding TotalSpaceSaving.HasValue}"
                                    Text="{Binding TotalSpaceSaving, StringFormat=' {0:P1}'}"
-                                   VerticalAlignment="Center" Margin="0,0,5,2" Classes="Monospace"/>
+                                   Margin="0,0,5,2" Classes="Monospace"/>
                     <TextBlock Grid.Column="2" IsVisible="{Binding TotalSpaceSaving.HasValue}"
                                Text="{Binding TotalSpaceSavingInMB}"
-                               VerticalAlignment="Center" Margin="0,0,5,0" Classes="Monospace"/>
+                               Margin="0,0,5,0" Classes="Monospace"/>
                     
                   </Grid>
                     
@@ -112,31 +93,38 @@
                         <ProgressBar Grid.Column="0" Value="{Binding FolderProgressBarValue}" Minimum="0" Maximum="100" ShowProgressText="True" Margin="0 1" Height="20"/>
                         <TextBlock Grid.Column="1" IsVisible="{Binding FolderSpaceSaving.HasValue}"
                                    Text="{Binding FolderSpaceSaving, StringFormat=' {0:P1}'}"
-                                   VerticalAlignment="Center" Margin="0,0,5,2" Classes="Monospace"/>
+                                   Margin="0,0,5,2" Classes="Monospace"/>
                         <TextBlock Grid.Column="2" IsVisible="{Binding FolderSpaceSaving.HasValue}"
                                    Text="{Binding FolderSpaceSavingInMB}"
-                                   VerticalAlignment="Center" Margin="0,0,5,0" Classes="Monospace"/>
+                                   Margin="0,0,5,0" Classes="Monospace"/>
                     </Grid>
 
                     
-                    <Grid ColumnDefinitions="Auto,*,Auto,Auto,Auto" IsVisible="{Binding IsProcessing}">
-                        <TextBlock Grid.Column="0" Text="Folder: " FontWeight="Bold"/>
+                    <Grid ColumnDefinitions="Auto,*" IsVisible="{Binding IsProcessing}" ColumnSpacing="5">
+                        <TextBlock Grid.Column="0" Text="Folder:" FontWeight="SemiBold"/>
                         <TextBlock Grid.Column="1" Text="{Binding CurrentFolderName}" HorizontalAlignment="Left" TextTrimming="CharacterEllipsis"/>
-                        <TextBlock Grid.Column="2" HorizontalAlignment="Right">
+                    </Grid>
+                    <Grid ColumnDefinitions="Auto,Auto" IsVisible="{Binding IsProcessing}" HorizontalAlignment="Left">
+                        <TextBlock Grid.Column="0" HorizontalAlignment="Right" Classes="Caption">
                             <Run Text="("/>
                             <Run Text="{Binding ProcessedFilesInCurrentFolder}"/>
                             <Run Text="/"/>
                             <Run Text="{Binding FilesInCurrentFolder}"/>
-                            <Run Text=" files)"/>
+                            <Run Text=" files) "/>
                         </TextBlock>
-                        <TextBlock Grid.Column="3" Text="{Binding HumanReadableFolderOriginalSize}" HorizontalAlignment="Right" Classes="Monospace"/>
-                        <TextBlock Grid.Column="4" Text="{Binding HumanReadableFolderConvertedSize}" HorizontalAlignment="Right" Classes="Monospace"/>
+                        <TextBlock Grid.Column="1" HorizontalAlignment="Right" Classes="Caption Monospace">
+                            <Run Text="{Binding HumanReadableFolderOriginalSize}"/>
+                            <Run Text="{Binding HumanReadableFolderConvertedSize}"/>
+                        </TextBlock>
                     </Grid>
 
-                    <Grid ColumnDefinitions="Auto,*,Auto" IsVisible="{Binding IsProcessing}">
-                        <TextBlock Grid.Column="0" Text="File: " FontWeight="Bold"/>
-                        <TextBlock Grid.Column="1" Text="{Binding CurrentFile}" HorizontalAlignment="Left" TextTrimming="CharacterEllipsis"/>
-                        <TextBlock Grid.Column="2" Text="{Binding HumanReadableCurrentFileSize}" HorizontalAlignment="Right"/>
+                    <Grid ColumnDefinitions="Auto,*" IsVisible="{Binding IsProcessing}" ColumnSpacing="5">
+                        <TextBlock Grid.Column="0" Text="File:" FontWeight="SemiBold"/>
+                        <TextBlock Grid.Column="1" TextTrimming="CharacterEllipsis">
+                            <Run Text="{Binding CurrentFile}"/>
+                            <Run Text=" - "/>
+                            <Run Text="{Binding HumanReadableCurrentFileSize}" Classes="Caption"/>
+                        </TextBlock>
                     </Grid>
 
                     <!-- New TextBlock for preview error message -->
@@ -146,7 +134,7 @@
                                IsVisible="{Binding PreviewErrorMessage, Converter={x:Static ObjectConverters.IsNotNull}}"
                                Margin="0,5,0,0"/>
 
-                    <TextBlock Text="{Binding StatusMessage}" TextWrapping="Wrap" Height="40"/>
+                    <TextBlock Text="{Binding StatusMessage}" TextWrapping="Wrap" Height="40" Classes="Caption"/>
 
                   <StackPanel Orientation="Horizontal" Spacing="10" Margin="0,5,0,0" IsVisible="{Binding IsProcessing}" HorizontalAlignment="Center">
                     <Button Content="Open Input Folder" Command="{Binding OpenInputFolderCommand}"/>
@@ -154,11 +142,11 @@
                   </StackPanel>
                     
                     <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10" RowSpacing="10">
-                        <Button Grid.Column="0" Content="Start Processing" Command="{Binding StartProcessingCommand}" IsEnabled="{Binding StartProcessingCommand.CanExecute}" HorizontalAlignment="Stretch" Classes="Accent" IsVisible="{Binding IsUiEnabled}" HorizontalContentAlignment="Center"/>
-                        <Button Grid.Column="1" Content="Cancel" Command="{Binding CancelProcessingCommand}" CommandParameter="{Binding $parent[Window]}" IsEnabled="{Binding CancelProcessingCommand.CanExecute}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"/>
-                        <Button Grid.Column="2" Content="View Log" Command="{Binding ViewLogCommand}" CommandParameter="{Binding $parent[Window]}" HorizontalAlignment="Stretch" IsVisible="{Binding IsUiEnabled}" HorizontalContentAlignment="Center"/>
+                        <Button Grid.Column="0" Content="Start Processing" Command="{Binding StartProcessingCommand}" IsEnabled="{Binding StartProcessingCommand.CanExecute}" HorizontalAlignment="Stretch" Classes="Accent" IsVisible="{Binding IsUiEnabled}"/>
+                        <Button Grid.Column="1" Content="Cancel" Command="{Binding CancelProcessingCommand}" CommandParameter="{Binding $parent[Window]}" IsEnabled="{Binding CancelProcessingCommand.CanExecute}" HorizontalAlignment="Stretch"/>
+                        <Button Grid.Column="2" Content="View Log" Command="{Binding ViewLogCommand}" CommandParameter="{Binding $parent[Window]}" HorizontalAlignment="Stretch" IsVisible="{Binding IsUiEnabled}"/>
                     </Grid>
-                    <Button Name="ExitButton" Content="Exit" HorizontalAlignment="Stretch" IsVisible="{Binding IsUiEnabled}" HorizontalContentAlignment="Center"/>
+                    <Button Name="ExitButton" Content="Exit" HorizontalAlignment="Stretch" IsVisible="{Binding IsUiEnabled}"/>
                 </StackPanel>
             </SplitView.Content>
             <SplitView.Pane>
@@ -179,13 +167,13 @@
                     BorderBrush="{DynamicResource SystemControlForegroundBaseMediumLowBrush}"
                     BorderThickness="1" CornerRadius="5" Padding="20" MinWidth="300">
                 <StackPanel Spacing="10">
-                    <TextBlock Text="Confirm Deletion" FontWeight="Bold" FontSize="16"/>
+                    <TextBlock Text="Confirm Deletion" Classes="h3"/>
                     <TextBlock Text="Are you sure you want to permanently delete the original source files? This action cannot be undone."
                                TextWrapping="Wrap"/>
                     <Grid ColumnDefinitions="*,*" ColumnSpacing="10" Margin="0,10,0,0">
                         <Button Grid.Column="0" Content="Yes, Delete"
                                 Command="{Binding ConfirmDeleteAndStartCommand}"
-                                Classes="Accent"/>
+                                Classes="destructive"/>
                         <Button Grid.Column="1" Content="No, Cancel"
                                 Command="{Binding CancelDeleteCommand}"/>
                     </Grid>

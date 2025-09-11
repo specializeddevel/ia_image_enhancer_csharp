@@ -64,7 +64,8 @@ public class ImageProcessorService
         int skippedFilesCount = 0;
         try
         {
-            var imageFiles = FindImageFiles(options);
+                        progress.Report(new ProcessingUpdate { Message = "Searching for image files..." });
+            var imageFiles = await FindImageFilesAsync(options, cancellationToken);
             if (imageFiles.Count == 0)
             {
                 progress.Report(new ProcessingUpdate { Message = "No images found to process.", IsComplete = true });
@@ -359,6 +360,32 @@ public class ImageProcessorService
             try { Directory.Delete(rootFolder); } 
             catch (Exception ex) { Debug.WriteLine($"Could not delete root directory {rootFolder}: {ex.Message}"); }
         }
+    }
+
+    private Task<List<FileInfo>> FindImageFilesAsync(ProcessingOptions options, CancellationToken cancellationToken)
+    {
+        return Task.Run(() =>
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            var directory = new DirectoryInfo(options.InputFolder);
+            var searchOption = options.ProcessSubfolders ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
+
+            var extensions = new List<string> { ".jpg", ".jpeg", ".png" };
+            if (options.IncludeWebPFiles)
+            {
+                extensions.Add(".webp");
+            }
+            if (options.IncludeAvifFiles)
+            {
+                extensions.Add(".avif");
+            }
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            return directory.GetFiles("*.*", searchOption)
+                            .Where(f => extensions.Contains(f.Extension.ToLower()))
+                            .ToList();
+        }, cancellationToken);
     }
 
     private List<FileInfo> FindImageFiles(ProcessingOptions options)

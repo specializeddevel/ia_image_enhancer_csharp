@@ -56,14 +56,14 @@
                         <ColumnDefinition Width="Auto" SharedSizeGroup="G"/>
                         <ColumnDefinition Width="Auto" SharedSizeGroup="H"/>
                     </Grid.ColumnDefinitions>
-                    <TextBlock Grid.Column="0" Text="Date" FontWeight="Bold" Classes="Monospace"/>
-                    <TextBlock Grid.Column="1" Text="Input Folder" FontWeight="Bold" Classes="Monospace"/>
-                    <TextBlock Grid.Column="2" Text="Output Folder" FontWeight="Bold" Classes="Monospace"/>
-                    <TextBlock Grid.Column="3" Text="Original File" FontWeight="Bold" Classes="Monospace"/>
-                    <TextBlock Grid.Column="4" Text="Processed File" FontWeight="Bold" Classes="Monospace"/>
-                    <TextBlock Grid.Column="5" Text="Original Size" FontWeight="Bold" Classes="Monospace"/>
-                    <TextBlock Grid.Column="6" Text="Processed Size" FontWeight="Bold" Classes="Monospace"/>
-                    <TextBlock Grid.Column="7" Text="Reduction" FontWeight="Bold" Classes="Monospace"/>
+                    <TextBlock Grid.Column="0" Text="Date" FontWeight="SemiBold" Classes="Monospace"/>
+                    <TextBlock Grid.Column="1" Text="Input Folder" FontWeight="SemiBold" Classes="Monospace"/>
+                    <TextBlock Grid.Column="2" Text="Output Folder" FontWeight="SemiBold" Classes="Monospace"/>
+                    <TextBlock Grid.Column="3" Text="Original File" FontWeight="SemiBold" Classes="Monospace"/>
+                    <TextBlock Grid.Column="4" Text="Processed File" FontWeight="SemiBold" Classes="Monospace"/>
+                    <TextBlock Grid.Column="5" Text="Original Size" FontWeight="SemiBold" Classes="Monospace"/>
+                    <TextBlock Grid.Column="6" Text="Processed Size" FontWeight="SemiBold" Classes="Monospace"/>
+                    <TextBlock Grid.Column="7" Text="Reduction" FontWeight="SemiBold" Classes="Monospace"/>
                 </Grid>
 
                 <ListBox Grid.Row="1" ItemsSource="{Binding LogEntries}">
@@ -104,7 +104,7 @@
                     VerticalAlignment="Center" HorizontalAlignment="Center"
                     MinWidth="300" MaxWidth="400">
               <StackPanel Spacing="10">
-                <TextBlock Text="Confirm Deletion" FontSize="18" FontWeight="Bold"/>
+                <TextBlock Text="Confirm Deletion" Classes="h3"/>
                 <TextBlock Text="Are you sure you want to permanently delete the log?" TextWrapping="Wrap"/>
                 <TextBlock Text="Consider exporting it to CSV first if you want to keep a record." TextWrapping="Wrap" Opacity="0.8"/>
                 <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Right" Margin="0,15,0,0">
