@@ -11,6 +11,7 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Media.Imaging;
+using Avalonia.Platform.Storage;
 using System.Linq;
 using ImageProcessor.UI.Views;
 using ImageProcessor.UI.ViewModels;
@@ -235,20 +236,30 @@ public partial class MainWindowViewModel : ObservableObject
     [RelayCommand]
     private async Task BrowseInputFolder(Window parent)
     {
-        var result = await new OpenFolderDialog { Title = "Select Input Folder" }.ShowAsync(parent);
-        if (!string.IsNullOrEmpty(result))
+        var result = await parent.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
         {
-            InputFolder = result;
+            Title = "Select Input Folder",
+            AllowMultiple = false
+        });
+
+        if (result.Count > 0 && result[0].TryGetLocalPath() is string path)
+        {
+            InputFolder = path;
         }
     }
 
     [RelayCommand]
     private async Task BrowseOutputFolder(Window parent)
     {
-        var result = await new OpenFolderDialog { Title = "Select Output Folder" }.ShowAsync(parent);
-        if (!string.IsNullOrEmpty(result))
+        var result = await parent.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
         {
-            OutputFolder = result;
+            Title = "Select Output Folder",
+            AllowMultiple = false
+        });
+
+        if (result.Count > 0 && result[0].TryGetLocalPath() is string path)
+        {
+            OutputFolder = path;
         }
     }
 

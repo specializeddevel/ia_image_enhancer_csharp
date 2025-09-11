@@ -36,6 +36,7 @@ namespace ImageProcessor.UI.ViewModels
         public SettingsViewModel(Action closeAction)
         {
             _closeAction = closeAction;
+            _commandPreview = string.Empty; // Initialize to satisfy CS8618
             _realesrganArguments = SettingsService.Instance.RealEsrganSettings.CommandArguments;
             UpdatePreview();
 

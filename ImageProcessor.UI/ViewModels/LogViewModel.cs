@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Avalonia.Controls;
+using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using ImageProcessor.Core;
@@ -41,26 +42,37 @@ public partial class LogViewModel : ViewModelBase
     [RelayCommand]
     private async Task ExportToCsv(Window owner)
     {
-        var saveFileDialog = new SaveFileDialog
+        var file = await owner.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
             Title = "Save Log As CSV",
+            SuggestedFileName = $"processing_log_{DateTime.Now:yyyyMMdd}.csv",
             DefaultExtension = "csv",
-            InitialFileName = $"processing_log_{DateTime.Now:yyyyMMdd}.csv"
-        };
-
-        var result = await saveFileDialog.ShowAsync(owner);
-
-        if (result is not null)
-        {
-            var sb = new StringBuilder();
-            sb.AppendLine("Time;Input Folder;Output Folder;Original File Name;Processed File Name;Original Size;Processed Size;Reduction");
-
-            foreach (var entry in LogEntries)
+            ShowOverwritePrompt = true,
+            FileTypeChoices = new[]
             {
-                sb.AppendLine($"{entry.Date:HH:mm:ss};{entry.InputFolder};{entry.OutputFolder};{entry.OriginalFileName};{entry.ProcessedFileName};{entry.OriginalSize};{entry.ProcessedSize};{entry.ReductionPercentage:P}");
+                new FilePickerFileType("CSV File") { Patterns = new[] { "*.csv" } }
             }
+        });
 
-            await File.WriteAllTextAsync(result, sb.ToString());
+        if (file is not null)
+        {
+            try
+            {
+                await using var stream = await file.OpenWriteAsync();
+                await using var writer = new StreamWriter(stream, Encoding.UTF8);
+                
+                await writer.WriteLineAsync("Time;Input Folder;Output Folder;Original File Name;Processed File Name;Original Size;Processed Size;Reduction");
+
+                foreach (var entry in LogEntries)
+                {
+                    await writer.WriteLineAsync($"{entry.Date:HH:mm:ss};{entry.InputFolder};{entry.OutputFolder};{entry.OriginalFileName};{entry.ProcessedFileName};{entry.OriginalSize};{entry.ProcessedSize};{entry.ReductionPercentage:P}");
+                }
+            }
+            catch (Exception ex)
+            {
+                // In a real app, you'd want to show this error to the user.
+                Console.WriteLine($"Error saving file: {ex.Message}");
+            }
         }
     }
 
