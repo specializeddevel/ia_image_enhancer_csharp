@@ -104,9 +104,11 @@
                     </Grid>
 
                     
-                    <Grid ColumnDefinitions="Auto,*" IsVisible="{Binding IsProcessing}" ColumnSpacing="5">
+                    <Grid ColumnDefinitions="Auto,*" 
+                          IsVisible="{Binding CurrentFolderSummary, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" 
+                          ColumnSpacing="5">
                         <TextBlock Grid.Column="0" Text="Folder:" FontWeight="SemiBold"/>
-                        <TextBlock Grid.Column="1" Text="{Binding CurrentFolderName}" HorizontalAlignment="Left" TextTrimming="CharacterEllipsis"/>
+                        <TextBlock Grid.Column="1" Text="{Binding CurrentFolderSummary}" HorizontalAlignment="Left" TextTrimming="CharacterEllipsis"/>
                     </Grid>
                     <Grid ColumnDefinitions="Auto,Auto" IsVisible="{Binding IsProcessing}" HorizontalAlignment="Left">
                         <TextBlock Grid.Column="0" HorizontalAlignment="Right" Classes="Caption">

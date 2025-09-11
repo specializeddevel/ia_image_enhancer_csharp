@@ -110,15 +110,18 @@ public class ImageProcessorService
                         folderSizes[directoryName] = (0, 0);
                     }
 
-                    var filesInFolder = filesByDirectory[lastDirectory].Count;
+                    var filesInFolder = filesByDirectory[lastDirectory];
+                    long currentFolderSize = filesInFolder.Sum(f => f.Length);
+
                     progress.Report(new ProcessingUpdate
                     {
                         Message = "Processing folder...",
                         CurrentFolderName = new DirectoryInfo(lastDirectory).Name,
-                        FilesInCurrentFolder = filesInFolder,
+                        FilesInCurrentFolder = filesInFolder.Count,
+                        CurrentFolderTotalSizeInBytes = currentFolderSize,
                         OverallProgress = (double)processedFiles / totalFiles, // Keep overall progress updated
                         ProcessedFilesInCurrentFolder = 0,
-                    FolderSpaceSaving = null
+                        FolderSpaceSaving = null
                     });
                     await Task.Delay(500, cancellationToken); // Give user time to read folder name
                 }
