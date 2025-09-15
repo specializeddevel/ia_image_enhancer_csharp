@@ -368,6 +368,18 @@ public partial class MainWindowViewModel : ObservableObject
             if (update.IsComplete || update.IsError)
             {
                 IsProcessing = false;
+
+                if (update.IsError)
+                {
+                    StatusMessage = "An error occurred. Please check the error message.";
+                    ErrorMessage = update.ErrorMessage;
+                }
+                else // isComplete
+                {
+                    StatusMessage = update.Message; // "Process completed!"
+                    ErrorMessage = null;
+                }
+
                 ImagePreview = null;
                 CurrentFolderSummary = string.Empty;
                 CurrentFile = string.Empty;
@@ -380,17 +392,13 @@ public partial class MainWindowViewModel : ObservableObject
                 TotalQueueSummary = string.Empty;
 
                 TotalSpaceSaving = TotalSpaceSaving; // Keep the last calculated value
-                TotalConvertedSize = 0; 
+                TotalConvertedSize = 0;
                 TotalOriginalSize = 0;
 
                 _currentInputSubFolder = string.Empty;
                 _currentOutputSubFolder = string.Empty;
                 CancelProcessingCommand.NotifyCanExecuteChanged();
                 StartProcessingCommand.NotifyCanExecuteChanged();
-
-                // Clear error messages and reset status
-                ErrorMessage = null;
-                StatusMessage = "Ready";
             }
         });
 
