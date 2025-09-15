@@ -448,7 +448,12 @@ public class ImageProcessorService
         if (process.ExitCode != 0)
         {
             Debug.WriteLine($"Process output: {output}");
-            throw new InvalidOperationException($"The process {Path.GetFileName(executablePath)} failed with exit code {process.ExitCode}. Error: {error}");
+            var errorSummary = error.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries).FirstOrDefault();
+            if (string.IsNullOrEmpty(errorSummary))
+            {
+                errorSummary = "No error output.";
+            }
+            throw new InvalidOperationException($"The process {Path.GetFileName(executablePath)} failed with exit code {process.ExitCode}. Cause: {errorSummary}");
         }
     }
 }
