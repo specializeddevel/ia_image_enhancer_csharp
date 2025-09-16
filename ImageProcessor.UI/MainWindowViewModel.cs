@@ -22,6 +22,7 @@ public partial class MainWindowViewModel : ObservableObject
 {
     private readonly ImageProcessorService _processorService;
     private readonly ProcessingLogService _logService;
+    private bool _isLoading;
 
     [ObservableProperty]
     private string _inputFolder = string.Empty;
@@ -167,8 +168,10 @@ public partial class MainWindowViewModel : ObservableObject
 
     public MainWindowViewModel()
     {
+        _isLoading = true;
         _processorService = new ImageProcessorService();
         _logService = new ProcessingLogService();
+
         Models = new ObservableCollection<string>
         {
             "realesrgan-x4plus",
@@ -179,12 +182,53 @@ public partial class MainWindowViewModel : ObservableObject
             "realesr-animevideov3-x4"
         };
 
+        LoadSettings();
+
         if (Application.Current != null)
         {
-            IsDarkMode = Application.Current.RequestedThemeVariant == ThemeVariant.Dark;
+            ThemeManager.SetTheme(IsDarkMode ? ThemeVariant.Dark : ThemeVariant.Light);
         }
 
         CheckForMissingDependencies();
+        _isLoading = false;
+    }
+
+    private void LoadSettings()
+    {
+        var userSettings = SettingsService.Instance.UserSettings;
+        InputFolder = userSettings.InputFolder;
+        OutputFolder = userSettings.OutputFolder;
+        UseInputFolderAsOutput = userSettings.UseInputFolderAsOutput;
+        ProcessSubfolders = userSettings.ProcessSubfolders;
+        ConvertToWebP = userSettings.ConvertToWebP;
+        ConvertToAvif = userSettings.ConvertToAvif;
+        ApplyUpscale = userSettings.ApplyUpscale;
+        DeleteSourceFile = userSettings.DeleteSourceFile;
+        IncludeWebPFiles = userSettings.IncludeWebPFiles;
+        IncludeAvifFiles = userSettings.IncludeAvifFiles;
+        SelectedModel = userSettings.SelectedModel;
+        IsDarkMode = userSettings.IsDarkMode;
+    }
+
+    public void SaveSettings()
+    {
+        if (_isLoading) return;
+        System.Diagnostics.Debug.WriteLine("SaveSettings called");
+        var userSettings = SettingsService.Instance.UserSettings;
+        userSettings.InputFolder = InputFolder;
+        userSettings.OutputFolder = OutputFolder;
+        userSettings.UseInputFolderAsOutput = UseInputFolderAsOutput;
+        userSettings.ProcessSubfolders = ProcessSubfolders;
+        userSettings.ConvertToWebP = ConvertToWebP;
+        userSettings.ConvertToAvif = ConvertToAvif;
+        userSettings.ApplyUpscale = ApplyUpscale;
+        userSettings.DeleteSourceFile = DeleteSourceFile;
+        userSettings.IncludeWebPFiles = IncludeWebPFiles;
+        userSettings.IncludeAvifFiles = IncludeAvifFiles;
+        userSettings.SelectedModel = SelectedModel;
+        userSettings.IsDarkMode = IsDarkMode;
+
+        SettingsService.Instance.Save();
     }
 
     private void CheckForMissingDependencies()
@@ -206,6 +250,7 @@ public partial class MainWindowViewModel : ObservableObject
         var theme = value ? ThemeVariant.Dark : ThemeVariant.Light;
         ThemeManager.SetTheme(theme);
         ThemeManager.SaveTheme(theme);
+        SaveSettings();
     }
 
     [RelayCommand]
@@ -490,6 +535,7 @@ public partial class MainWindowViewModel : ObservableObject
         {
             OutputFolder = InputFolder;
         }
+        SaveSettings();
     }
 
     partial void OnInputFolderChanged(string value)
@@ -500,8 +546,13 @@ public partial class MainWindowViewModel : ObservableObject
         }
         OnPropertyChanged(nameof(CanSelectSameOutputFolder));
         StartProcessingCommand.NotifyCanExecuteChanged();
+        SaveSettings();
     }
-    partial void OnOutputFolderChanged(string value) => StartProcessingCommand.NotifyCanExecuteChanged();
+    partial void OnOutputFolderChanged(string value)
+    {
+        StartProcessingCommand.NotifyCanExecuteChanged();
+        SaveSettings();
+    }
     partial void OnIsProcessingChanged(bool value)
     {
         OnPropertyChanged(nameof(IsUiEnabled)); // Notify the UI that the enabled state has changed
@@ -509,15 +560,21 @@ public partial class MainWindowViewModel : ObservableObject
         CancelProcessingCommand.NotifyCanExecuteChanged();
     }
 
-    partial void OnApplyUpscaleChanged(bool value) => StartProcessingCommand.NotifyCanExecuteChanged();
+    partial void OnApplyUpscaleChanged(bool value)
+    {
+        StartProcessingCommand.NotifyCanExecuteChanged();
+        SaveSettings();
+    }
     partial void OnConvertToWebPChanged(bool value)
     {
         StartProcessingCommand.NotifyCanExecuteChanged();
+        SaveSettings();
     }
 
     partial void OnConvertToAvifChanged(bool value)
     {
         StartProcessingCommand.NotifyCanExecuteChanged();
+        SaveSettings();
     }
 
  
@@ -661,6 +718,12 @@ public partial class MainWindowViewModel : ObservableObject
             // Consider notifying the user in a more visible way
         }
     }
+
+    partial void OnProcessSubfoldersChanged(bool value) { SaveSettings(); }
+    partial void OnDeleteSourceFileChanged(bool value) { SaveSettings(); }
+    partial void OnIncludeWebPFilesChanged(bool value) { SaveSettings(); }
+    partial void OnIncludeAvifFilesChanged(bool value) { SaveSettings(); }
+    partial void OnSelectedModelChanged(string value) { SaveSettings(); }
 
     private static string FormatBytes(long bytes)
     {

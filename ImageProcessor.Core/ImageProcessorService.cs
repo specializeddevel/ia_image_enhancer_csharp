@@ -277,7 +277,7 @@ public class ImageProcessorService
 
         if (options.ApplyUpscale)
         {
-            string arguments = SettingsService.Instance.RealEsrganSettings.CommandArguments
+            string arguments = SettingsService.Instance.UserSettings.RealEsrganSettings.CommandArguments
                 .Replace("{inputFile}", $"\"{file.FullName}\"")
                 .Replace("{outputFile}", $"\"{improvedPngPath}\"")
                 .Replace("{modelName}", options.Model)

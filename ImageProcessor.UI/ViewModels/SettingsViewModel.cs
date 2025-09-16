@@ -37,7 +37,7 @@ namespace ImageProcessor.UI.ViewModels
         {
             _closeAction = closeAction;
             _commandPreview = string.Empty; // Initialize to satisfy CS8618
-            _realesrganArguments = SettingsService.Instance.RealEsrganSettings.CommandArguments;
+            _realesrganArguments = SettingsService.Instance.UserSettings.RealEsrganSettings.CommandArguments;
             UpdatePreview();
 
             SaveCommand = new RelayCommand(Save);
@@ -58,7 +58,7 @@ namespace ImageProcessor.UI.ViewModels
 
         private void Save()
         {
-            SettingsService.Instance.RealEsrganSettings.CommandArguments = RealEsrganArguments;
+            SettingsService.Instance.UserSettings.RealEsrganSettings.CommandArguments = RealEsrganArguments;
             SettingsService.Instance.Save();
             _closeAction();
         }
