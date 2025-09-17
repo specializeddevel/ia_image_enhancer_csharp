@@ -172,17 +172,20 @@ public partial class MainWindowViewModel : ObservableObject
         _processorService = new ImageProcessorService();
         _logService = new ProcessingLogService();
 
-        Models = new ObservableCollection<string>
-        {
-            "realesrgan-x4plus",
-            "realesrnet-x4plus",
-            "realesrgan-x4plus-anime",
-            "realesr-animevideov3",
-            "realesr-animevideov3-x2",
-            "realesr-animevideov3-x4"
-        };
+        // Populate Models from ImageProcessorService
+        Models = new ObservableCollection<string>(_processorService.GetAvailableModels());
 
         LoadSettings();
+
+        // Ensure SelectedModel is valid after loading settings
+        if (!Models.Contains(SelectedModel) && Models.Any())
+        {
+            SelectedModel = Models.First();
+        }
+        else if (!Models.Any())
+        {
+            SelectedModel = string.Empty; // No models available
+        }
 
         if (Application.Current != null)
         {

@@ -456,4 +456,17 @@ public class ImageProcessorService
             throw new InvalidOperationException($"The process {Path.GetFileName(executablePath)} failed with exit code {process.ExitCode}. Cause: {errorSummary}");
         }
     }
+
+    public List<string> GetAvailableModels()
+    {
+        var models = new List<string>();
+        if (Directory.Exists(_modelsPath))
+        {
+            foreach (var file in Directory.GetFiles(_modelsPath, "*.bin"))
+            {
+                models.Add(Path.GetFileNameWithoutExtension(file));
+            }
+        }
+        return models;
+    }
 }
