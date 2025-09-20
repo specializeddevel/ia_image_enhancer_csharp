@@ -5,10 +5,17 @@ namespace ImageProcessor.UI.Views
 {
     public partial class SettingsView : Window
     {
+        // For designer
         public SettingsView()
         {
             InitializeComponent();
-            DataContext = new SettingsViewModel(Close);
+        }
+
+        public SettingsView(SettingsViewModel viewModel)
+        {
+            InitializeComponent();
+            DataContext = viewModel;
+            viewModel.CloseRequested += (sender, e) => Close();
         }
     }
 }

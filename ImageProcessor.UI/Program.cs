@@ -1,21 +1,46 @@
 ﻿using Avalonia;
+using ImageProcessor.Core;
+using ImageProcessor.UI.ViewModels;
+using ImageProcessor.UI.Views;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 
 namespace ImageProcessor.UI;
 
 class Program
 {
-    // Initialization code. Don't use any Avalonia, third-party APIs or any
-    // SynchronizationContext-reliant code before AppMain is called: things aren't initialized
-    // yet and stuff might break.
     [STAThread]
-    public static void Main(string[] args) => BuildAvaloniaApp()
-        .StartWithClassicDesktopLifetime(args);
+    public static void Main(string[] args)
+    {
+        var services = new ServiceCollection();
+        ConfigureServices(services);
+        var serviceProvider = services.BuildServiceProvider();
 
-    // Avalonia configuration, don't remove; also used by visual designer.
-    public static AppBuilder BuildAvaloniaApp()
-        => AppBuilder.Configure<App>()
+        BuildAvaloniaApp(serviceProvider)
+            .StartWithClassicDesktopLifetime(args);
+    }
+
+    public static AppBuilder BuildAvaloniaApp(IServiceProvider serviceProvider)
+        => AppBuilder.Configure(() => new App(serviceProvider))
             .UsePlatformDetect()
             .WithInterFont()
             .LogToTrace();
+
+    private static void ConfigureServices(IServiceCollection services)
+    {
+        // Core Services
+        services.AddSingleton<ImageProcessorService>();
+        services.AddSingleton<ProcessingLogService>();
+        services.AddSingleton<SettingsService>();
+
+        // ViewModels
+        services.AddTransient<MainWindowViewModel>();
+        services.AddTransient<SettingsViewModel>(); 
+        services.AddTransient<LogViewModel>();
+
+        // Views
+        services.AddTransient<MainWindow>();
+        services.AddTransient<SettingsView>();
+        services.AddTransient<LogView>();
+    }
 }

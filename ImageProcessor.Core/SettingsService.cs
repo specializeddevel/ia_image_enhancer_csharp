@@ -6,14 +6,11 @@ namespace ImageProcessor.Core
 {
     public class SettingsService
     {
-        private static readonly Lazy<SettingsService> instance = new(() => new SettingsService());
         private readonly string _settingsFilePath;
 
-        public static SettingsService Instance => instance.Value;
+        public UserSettings UserSettings { get; set; } = new();
 
-        public UserSettings UserSettings { get; set; }
-
-        private SettingsService()
+        public SettingsService()
         {
             string appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             string appFolder = Path.Combine(appDataFolder, "ImageProcessor");

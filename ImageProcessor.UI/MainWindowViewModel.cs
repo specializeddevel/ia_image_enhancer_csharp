@@ -15,6 +15,7 @@ using Avalonia.Platform.Storage;
 using System.Linq;
 using ImageProcessor.UI.Views;
 using ImageProcessor.UI.ViewModels;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace ImageProcessor.UI.ViewModels;
 
@@ -22,6 +23,8 @@ public partial class MainWindowViewModel : ObservableObject
 {
     private readonly ImageProcessorService _processorService;
     private readonly ProcessingLogService _logService;
+    private readonly SettingsService _settingsService;
+    private readonly IServiceProvider _serviceProvider;
     private bool _isLoading;
 
     [ObservableProperty]
@@ -137,7 +140,7 @@ public partial class MainWindowViewModel : ObservableObject
     private long _totalConvertedSize;
 
     [ObservableProperty]
-    private string _selectedModel = "realesrgan-x4plus";
+    private string _selectedModel = "Photo-Small-W2xEX";
 
     [ObservableProperty]
     private Bitmap? _imagePreview;
@@ -166,11 +169,13 @@ public partial class MainWindowViewModel : ObservableObject
     [ObservableProperty]
     private bool _canProcess = true; // Default to true, assume dependencies are fine until checked
 
-    public MainWindowViewModel()
+    public MainWindowViewModel(ImageProcessorService processorService, ProcessingLogService logService, SettingsService settingsService, IServiceProvider serviceProvider)
     {
         _isLoading = true;
-        _processorService = new ImageProcessorService();
-        _logService = new ProcessingLogService();
+        _processorService = processorService;
+        _logService = logService;
+        _settingsService = settingsService;
+        _serviceProvider = serviceProvider;
 
         // Populate Models from ImageProcessorService
         Models = new ObservableCollection<string>(_processorService.GetAvailableModels());
@@ -198,7 +203,7 @@ public partial class MainWindowViewModel : ObservableObject
 
     private void LoadSettings()
     {
-        var userSettings = SettingsService.Instance.UserSettings;
+        var userSettings = _settingsService.UserSettings;
         InputFolder = userSettings.InputFolder;
         OutputFolder = userSettings.OutputFolder;
         UseInputFolderAsOutput = userSettings.UseInputFolderAsOutput;
@@ -217,7 +222,7 @@ public partial class MainWindowViewModel : ObservableObject
     {
         if (_isLoading) return;
         System.Diagnostics.Debug.WriteLine("SaveSettings called");
-        var userSettings = SettingsService.Instance.UserSettings;
+        var userSettings = _settingsService.UserSettings;
         userSettings.InputFolder = InputFolder;
         userSettings.OutputFolder = OutputFolder;
         userSettings.UseInputFolderAsOutput = UseInputFolderAsOutput;
@@ -231,7 +236,7 @@ public partial class MainWindowViewModel : ObservableObject
         userSettings.SelectedModel = SelectedModel;
         userSettings.IsDarkMode = IsDarkMode;
 
-        SettingsService.Instance.Save();
+        _settingsService.Save();
     }
 
     private void CheckForMissingDependencies()
@@ -291,7 +296,7 @@ public partial class MainWindowViewModel : ObservableObject
     {
         if (parameter is Window owner)
         {
-            var settingsWindow = new SettingsView();
+            var settingsWindow = _serviceProvider.GetRequiredService<SettingsView>();
             await settingsWindow.ShowDialog(owner);
         }
     }
@@ -680,10 +685,7 @@ public partial class MainWindowViewModel : ObservableObject
         [RelayCommand]
     private async Task ViewLog(Window parentWindow)
     {
-        var logView = new Views.LogView
-        {
-            DataContext = new LogViewModel(_logService)
-        };
+        var logView = _serviceProvider.GetRequiredService<Views.LogView>();
         await logView.ShowDialog(parentWindow);
     }
 

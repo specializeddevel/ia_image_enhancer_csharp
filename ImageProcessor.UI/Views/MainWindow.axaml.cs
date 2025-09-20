@@ -9,11 +9,16 @@ namespace ImageProcessor.UI.Views;
 
 public partial class MainWindow : Window
 {
-    public MainWindow()
+    // Parameterless constructor for designer support
+    public MainWindow() 
     {
         InitializeComponent();
+    }
 
-        DataContext = new MainWindowViewModel();
+    public MainWindow(MainWindowViewModel viewModel)
+    {
+        InitializeComponent();
+        DataContext = viewModel;
 
         var exitButton = this.FindControl<Button>("ExitButton");
         if (exitButton != null)

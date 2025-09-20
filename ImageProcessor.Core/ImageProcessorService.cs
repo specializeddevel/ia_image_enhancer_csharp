@@ -9,11 +9,13 @@ public class ImageProcessorService
     private readonly string _cwebpExecutablePath;
     private readonly string _ffmpegExecutablePath; // Changed for ffmpeg conversion
     private readonly string _modelsPath;
+    private readonly SettingsService _settingsService;
 
     public List<string> DependenciesNotFound { get; } = new();
 
-    public ImageProcessorService()
+    public ImageProcessorService(SettingsService settingsService)
     {
+        _settingsService = settingsService;
         string currentDir = AppContext.BaseDirectory;
         _modelsPath = Path.Combine(currentDir, "models");
 
@@ -277,7 +279,7 @@ public class ImageProcessorService
 
         if (options.ApplyUpscale)
         {
-            string arguments = SettingsService.Instance.UserSettings.RealEsrganSettings.CommandArguments
+            string arguments = _settingsService.UserSettings.RealEsrganSettings.CommandArguments
                 .Replace("{inputFile}", $"\"{file.FullName}\"")
                 .Replace("{outputFile}", $"\"{improvedPngPath}\"")
                 .Replace("{modelName}", options.Model)

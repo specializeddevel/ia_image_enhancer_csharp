@@ -8,7 +8,8 @@ namespace ImageProcessor.UI.ViewModels
 {
     public partial class SettingsViewModel : ObservableObject
     {
-        private readonly Action _closeAction;
+        private readonly SettingsService _settingsService;
+        public event EventHandler? CloseRequested;
 
         private string _realesrganArguments;
 
@@ -31,24 +32,30 @@ namespace ImageProcessor.UI.ViewModels
         public ICommand CancelCommand { get; }
 
         // Design-time constructor
-        public SettingsViewModel() : this(() => { }) { }
-
-        public SettingsViewModel(Action closeAction)
+        public SettingsViewModel()
         {
-            _closeAction = closeAction;
+            _settingsService = new SettingsService(); // For designer
+            _commandPreview = string.Empty;
+            _realesrganArguments = new UserSettings().RealEsrganSettings.CommandArguments;
+            UpdatePreview();
+            SaveCommand = new RelayCommand(Save);
+            CancelCommand = new RelayCommand(Cancel);
+        }
+
+        public SettingsViewModel(SettingsService settingsService)
+        {
+            _settingsService = settingsService;
             _commandPreview = string.Empty; // Initialize to satisfy CS8618
-            _realesrganArguments = SettingsService.Instance.UserSettings.RealEsrganSettings.CommandArguments;
+            _realesrganArguments = _settingsService.UserSettings.RealEsrganSettings.CommandArguments;
             UpdatePreview();
 
             SaveCommand = new RelayCommand(Save);
             CancelCommand = new RelayCommand(Cancel);
         }
 
-        
-
         private void UpdatePreview()
         {
-                        CommandPreview = _realesrganArguments
+            CommandPreview = _realesrganArguments
                 .Replace("{inputFile}", "C:\\path\\to\\input.jpg")
                 .Replace("{outputFile}", "C:\\path\\to\\output.png")
                 .Replace("{modelName}", "realesrgan-x4plus")
@@ -58,14 +65,14 @@ namespace ImageProcessor.UI.ViewModels
 
         private void Save()
         {
-            SettingsService.Instance.UserSettings.RealEsrganSettings.CommandArguments = RealEsrganArguments;
-            SettingsService.Instance.Save();
-            _closeAction();
+            _settingsService.UserSettings.RealEsrganSettings.CommandArguments = RealEsrganArguments;
+            _settingsService.Save();
+            CloseRequested?.Invoke(this, EventArgs.Empty);
         }
 
         private void Cancel()
         {
-            _closeAction();
+            CloseRequested?.Invoke(this, EventArgs.Empty);
         }
     }
 }
