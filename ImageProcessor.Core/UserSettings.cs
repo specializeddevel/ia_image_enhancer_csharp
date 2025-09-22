@@ -14,6 +14,8 @@ namespace ImageProcessor.Core
         public bool IncludeWebPFiles { get; set; }
         public bool IncludeAvifFiles { get; set; }
         public string SelectedModel { get; set; } = "realesrgan-x4plus";
+        public int WebPQuality { get; set; } = 80;
+        public int AvifQuality { get; set; } = 44;
         public bool IsDarkMode { get; set; }
         public RealEsrganSettings RealEsrganSettings { get; set; } = new();
     }

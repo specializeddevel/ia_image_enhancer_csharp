@@ -291,13 +291,17 @@ public class ImageProcessorService
 
         string sourceForConversion = options.ApplyUpscale && File.Exists(improvedPngPath) ? improvedPngPath : file.FullName;
 
+        // AVIF CRF scale is 0-63, where 0 is best quality.
+        // We map our 0-100 UI quality (where 100 is best) to the CRF scale.
+        int avifCrf = 63 - (int)Math.Round(options.AvifQuality * 63.0 / 100.0);
+
         if (options.ConvertToWebP && options.ConvertToAvif)
         {
-            await RunProcessAsync(_cwebpExecutablePath, $"-q 80 \"{sourceForConversion}\" -o \"{intermediateWebPPath}\"", cancellationToken);
+            await RunProcessAsync(_cwebpExecutablePath, $"-q {options.WebPQuality} \"{sourceForConversion}\" -o \"{intermediateWebPPath}\"", cancellationToken);
 
             if (File.Exists(intermediateWebPPath))
             {
-                await RunProcessAsync(_ffmpegExecutablePath, $"-y -i \"{intermediateWebPPath}\" -c:v libaom-av1 -still-picture 1 -crf 35 -b:v 0 -cpu-used 4 -threads 8 \"{finalAvifPath}\"", cancellationToken);
+                await RunProcessAsync(_ffmpegExecutablePath, $"-y -i \"{intermediateWebPPath}\" -c:v libaom-av1 -still-picture 1 -crf {avifCrf} -b:v 0 -cpu-used 4 -threads 8 \"{finalAvifPath}\"", cancellationToken);
                 if (File.Exists(finalAvifPath))
                 {
                     finalSize = new FileInfo(finalAvifPath).Length;
@@ -308,7 +312,7 @@ public class ImageProcessorService
         }
         else if (options.ConvertToWebP)
         {
-            await RunProcessAsync(_cwebpExecutablePath, $"-q 80 \"{sourceForConversion}\" -o \"{finalWebPPath}\"", cancellationToken);
+            await RunProcessAsync(_cwebpExecutablePath, $"-q {options.WebPQuality} \"{sourceForConversion}\" -o \"{finalWebPPath}\"", cancellationToken);
             if (File.Exists(finalWebPPath))
             {
                 finalSize = new FileInfo(finalWebPPath).Length;
@@ -317,7 +321,7 @@ public class ImageProcessorService
         }
         else if (options.ConvertToAvif)
         {
-            await RunProcessAsync(_ffmpegExecutablePath, $"-y -i \"{sourceForConversion}\" -c:v libaom-av1 -still-picture 1 -crf 35 -b:v 0 -cpu-used 4 -threads 8 \"{finalAvifPath}\"", cancellationToken);
+            await RunProcessAsync(_ffmpegExecutablePath, $"-y -i \"{sourceForConversion}\" -c:v libaom-av1 -still-picture 1 -crf {avifCrf} -b:v 0 -cpu-used 4 -threads 8 \"{finalAvifPath}\"", cancellationToken);
             if (File.Exists(finalAvifPath))
             {
                 finalSize = new FileInfo(finalAvifPath).Length;

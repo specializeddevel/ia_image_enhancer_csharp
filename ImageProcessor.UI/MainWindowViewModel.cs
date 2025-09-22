@@ -346,6 +346,7 @@ public partial class MainWindowViewModel : ObservableObject
         PreviewErrorMessage = null; // Clear any previous preview error message
         _cancellationTokenSource = new CancellationTokenSource();
 
+        var userSettings = _settingsService.UserSettings;
         var options = new ProcessingOptions(
             InputFolder,
             OutputFolder,
@@ -356,7 +357,9 @@ public partial class MainWindowViewModel : ObservableObject
             ApplyUpscale,
             DeleteSourceFile,
             IncludeWebPFiles,
-            IncludeAvifFiles
+            IncludeAvifFiles,
+            userSettings.WebPQuality,
+            userSettings.AvifQuality
         );
 
         var progress = new Progress<ProcessingUpdate>(update =>
