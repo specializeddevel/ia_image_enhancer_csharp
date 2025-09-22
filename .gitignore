@@ -94,3 +94,4 @@ intrucciones_git.txt
 errors.txt
 image-processor-web/node_modules
 publish/
+"processing_log_*.csv" 

@@ -8,13 +8,17 @@
         x:DataType="vm:MainWindowViewModel"
         WindowStartupLocation="CenterScreen"
         Title="Image Enhancer AI (.NET Edition)"
-        Width="900" Height="750" MinWidth="900" MinHeight="750">
+        Width="900" Height="750" MinWidth="900" MinHeight="750"
+        DragDrop.DragOver="OnDragOver"
+        DragDrop.DragLeave="OnDragLeave"
+        DragDrop.Drop="OnDrop">
 
     <Design.DataContext>
         <vm:MainWindowViewModel/>
     </Design.DataContext>
 
-    <Grid RowDefinitions="Auto,*" Margin="15">
+    <Border Name="DropTargetBorder" BorderThickness="2" BorderBrush="Transparent">
+        <Grid RowDefinitions="Auto,*" Margin="15">
 
         <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="5" HorizontalAlignment="Right">
             <TextBlock Text="Dark Theme"/>
@@ -186,5 +190,6 @@
                 </StackPanel>
             </Border>
         </Grid>
-    </Grid>
-</Window>
+            </Grid>
+        </Border>
+    </Window>

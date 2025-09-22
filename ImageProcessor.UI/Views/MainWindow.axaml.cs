@@ -3,7 +3,12 @@ using Avalonia.Controls;
 using ImageProcessor.UI.ViewModels;
 using System;
 using System.ComponentModel;
+using System.IO;
+using System.Linq;
+using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.Media;
+using Avalonia.Platform.Storage;
 
 namespace ImageProcessor.UI.Views;
 
@@ -20,6 +25,12 @@ public partial class MainWindow : Window
         InitializeComponent();
         DataContext = viewModel;
 
+        var border = this.FindControl<Border>("DropTargetBorder");
+        if (border != null)
+        {
+            DragDrop.SetAllowDrop(border, true);
+        }
+
         var exitButton = this.FindControl<Button>("ExitButton");
         if (exitButton != null)
         {
@@ -29,6 +40,51 @@ public partial class MainWindow : Window
         // Handle the Loaded event to manually set the top position
         Loaded += OnLoaded;
         Closing += OnClosing;
+    }
+
+    private void OnDragOver(object? sender, DragEventArgs e)
+    {
+        // Check if the dragged data contains files or folders
+        if (e.Data.Contains(DataFormats.Files))
+        {
+            e.DragEffects = DragDropEffects.Copy;
+            DropTargetBorder.BorderBrush = Brushes.DodgerBlue; // Visual feedback
+        }
+        else
+        {
+            e.DragEffects = DragDropEffects.None;
+        }
+    }
+
+    private void OnDragLeave(object? sender, DragEventArgs e)
+    {
+        DropTargetBorder.BorderBrush = Brushes.Transparent; // Reset visual feedback
+    }
+
+    private void OnDrop(object? sender, DragEventArgs e)
+    {
+        DropTargetBorder.BorderBrush = Brushes.Transparent; // Reset visual feedback
+
+        if (e.Data.GetFiles() is { } files && files.Any())
+        {
+            var path = files.First().TryGetLocalPath();
+            if (path != null)
+            {
+                if (DataContext is MainWindowViewModel vm)
+                {
+                    // If the dropped item is a file, use its parent directory.
+                    // If it's a directory, use the directory itself.
+                    if (File.Exists(path))
+                    {
+                        vm.InputFolder = Path.GetDirectoryName(path) ?? string.Empty;
+                    }
+                    else if (Directory.Exists(path))
+                    {
+                        vm.InputFolder = path;
+                    }
+                }
+            }
+        }
     }
 
     private void OnLoaded(object? sender, EventArgs e)
