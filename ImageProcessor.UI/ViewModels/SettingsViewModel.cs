@@ -11,6 +11,12 @@ namespace ImageProcessor.UI.ViewModels
         private readonly SettingsService _settingsService;
         public event EventHandler? CloseRequested;
 
+        [ObservableProperty]
+        private int _webPQuality;
+
+        [ObservableProperty]
+        private int _avifQuality;
+
         private string _realesrganArguments;
 
         [ObservableProperty]
@@ -35,6 +41,8 @@ namespace ImageProcessor.UI.ViewModels
         public SettingsViewModel()
         {
             _settingsService = new SettingsService(); // For designer
+            _webPQuality = 80;
+            _avifQuality = 44;
             _commandPreview = string.Empty;
             _realesrganArguments = new UserSettings().RealEsrganSettings.CommandArguments;
             UpdatePreview();
@@ -45,6 +53,8 @@ namespace ImageProcessor.UI.ViewModels
         public SettingsViewModel(SettingsService settingsService)
         {
             _settingsService = settingsService;
+            _webPQuality = _settingsService.UserSettings.WebPQuality;
+            _avifQuality = _settingsService.UserSettings.AvifQuality;
             _commandPreview = string.Empty; // Initialize to satisfy CS8618
             _realesrganArguments = _settingsService.UserSettings.RealEsrganSettings.CommandArguments;
             UpdatePreview();
@@ -65,6 +75,8 @@ namespace ImageProcessor.UI.ViewModels
 
         private void Save()
         {
+            _settingsService.UserSettings.WebPQuality = WebPQuality;
+            _settingsService.UserSettings.AvifQuality = AvifQuality;
             _settingsService.UserSettings.RealEsrganSettings.CommandArguments = RealEsrganArguments;
             _settingsService.Save();
             CloseRequested?.Invoke(this, EventArgs.Empty);

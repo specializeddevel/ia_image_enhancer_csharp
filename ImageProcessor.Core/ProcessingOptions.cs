@@ -25,5 +25,7 @@ public record ProcessingOptions(
     bool ApplyUpscale,
     bool DeleteSourceFile,
     bool IncludeWebPFiles,
-    bool IncludeAvifFiles
+    bool IncludeAvifFiles,
+    int WebPQuality = 80,
+    int AvifQuality = 70
 );
