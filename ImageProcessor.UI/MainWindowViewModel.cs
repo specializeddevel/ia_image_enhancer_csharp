@@ -24,6 +24,7 @@ public partial class MainWindowViewModel : ObservableObject
     private readonly ImageProcessorService _processorService;
     private readonly ProcessingLogService _logService;
     private readonly SettingsService _settingsService;
+    private readonly ProfileService _profileService;
     private readonly IServiceProvider _serviceProvider;
     private bool _isLoading;
 
@@ -156,6 +157,9 @@ public partial class MainWindowViewModel : ObservableObject
 
     public ObservableCollection<string> Models { get; }
 
+    [ObservableProperty]
+    private string _newProfileName = "New Profile";
+
     private CancellationTokenSource? _cancellationTokenSource;
     private string _currentInputSubFolder = string.Empty;
     private string _currentOutputSubFolder = string.Empty;
@@ -169,12 +173,13 @@ public partial class MainWindowViewModel : ObservableObject
     [ObservableProperty]
     private bool _canProcess = true; // Default to true, assume dependencies are fine until checked
 
-    public MainWindowViewModel(ImageProcessorService processorService, ProcessingLogService logService, SettingsService settingsService, IServiceProvider serviceProvider)
+    public MainWindowViewModel(ImageProcessorService processorService, ProcessingLogService logService, SettingsService settingsService, ProfileService profileService, IServiceProvider serviceProvider)
     {
         _isLoading = true;
         _processorService = processorService;
         _logService = logService;
         _settingsService = settingsService;
+        _profileService = profileService;
         _serviceProvider = serviceProvider;
 
         // Populate Models from ImageProcessorService
@@ -198,6 +203,21 @@ public partial class MainWindowViewModel : ObservableObject
         }
 
         CheckForMissingDependencies();
+
+        // Load last used profile if it exists
+        var lastProfileName = _settingsService.UserSettings.LastUsedProfileName;
+        if (!string.IsNullOrEmpty(lastProfileName))
+        {
+            var profileOptions = _profileService.LoadProfile(lastProfileName);
+            if (profileOptions != null)
+            {
+                ApplyProfileOptions(profileOptions);
+                NewProfileName = lastProfileName;
+                StatusMessage = $"Loaded last used profile: '{lastProfileName}'.";
+                Task.Delay(3000).ContinueWith(t => StatusMessage = "Ready");
+            }
+        }
+
         _isLoading = false;
     }
 
@@ -239,18 +259,101 @@ public partial class MainWindowViewModel : ObservableObject
         _settingsService.Save();
     }
 
+    private void ApplyProfileOptions(ProcessingOptions options)
+    {
+        // Stop listening to changes while we update properties
+        bool wasLoading = _isLoading;
+        _isLoading = true;
+
+        InputFolder = options.InputFolder;
+        OutputFolder = options.OutputFolder;
+        ProcessSubfolders = options.ProcessSubfolders;
+        ConvertToWebP = options.ConvertToWebP;
+        ConvertToAvif = options.ConvertToAvif;
+        ApplyUpscale = options.ApplyUpscale;
+        DeleteSourceFile = options.DeleteSourceFile;
+        IncludeWebPFiles = options.IncludeWebPFiles;
+        IncludeAvifFiles = options.IncludeAvifFiles;
+
+        if (Models.Contains(options.Model))
+        {
+            SelectedModel = options.Model;
+        }
+        
+        _isLoading = wasLoading;
+    }
+
     private void CheckForMissingDependencies()
     {
         if (_processorService.DependenciesNotFound.Any())
         {
             ErrorMessage = $"One or more required dependencies were not found: {string.Join(", ", _processorService.DependenciesNotFound)}. Please make sure they are in the application's directory.";
-            CanProcess = false; // Disable processing if dependencies are missing
+            CanProcess = false;
         }
         else
         {
-            ErrorMessage = null; // Clear error if dependencies are found
-            CanProcess = true; // Enable processing
+            ErrorMessage = null;
+            CanProcess = true;
         }
+    }
+
+    [RelayCommand]
+    private async Task OpenProfilesDialog(object parameter)
+    {
+        if (parameter is not Window owner) return;
+
+        var profilesView = _serviceProvider.GetRequiredService<ProfilesView>();
+        var result = await profilesView.ShowDialog<(string ProfileName, ProcessingOptions Options)?>(owner);
+
+        if (result.HasValue)
+        {
+            var (profileName, options) = result.Value;
+            ApplyProfileOptions(options);
+            NewProfileName = profileName; // Update the profile name text box
+
+            // Save as last used profile
+            _settingsService.UserSettings.LastUsedProfileName = profileName;
+            _settingsService.Save();
+        }
+    }
+
+    [RelayCommand(CanExecute = nameof(CanSaveProfile))]
+    private void SaveProfile()
+    {
+        var options = new ProcessingOptions(
+            InputFolder,
+            OutputFolder,
+            SelectedModel,
+            ProcessSubfolders,
+            ConvertToWebP,
+            ConvertToAvif,
+            ApplyUpscale,
+            DeleteSourceFile,
+            IncludeWebPFiles,
+            IncludeAvifFiles,
+            _settingsService.UserSettings.WebPQuality,
+            _settingsService.UserSettings.AvifQuality
+        );
+
+        _profileService.SaveProfile(NewProfileName, options);
+
+        // Save as last used profile
+        _settingsService.UserSettings.LastUsedProfileName = NewProfileName;
+        _settingsService.Save();
+
+        StatusMessage = $"Profile '{NewProfileName}' saved!";
+        // Use the UI thread to reset the message after a delay to prevent cross-thread exceptions.
+        Task.Delay(3000).ContinueWith((Task task) => 
+        {
+            Avalonia.Threading.Dispatcher.UIThread.Post(() => StatusMessage = "Ready");
+        });
+    }
+
+    private bool CanSaveProfile() => !string.IsNullOrWhiteSpace(NewProfileName);
+
+    partial void OnNewProfileNameChanged(string value)
+    {
+        SaveProfileCommand.NotifyCanExecuteChanged();
     }
 
     partial void OnIsDarkModeChanged(bool value)

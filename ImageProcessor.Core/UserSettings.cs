@@ -17,6 +17,7 @@ namespace ImageProcessor.Core
         public int WebPQuality { get; set; } = 80;
         public int AvifQuality { get; set; } = 44;
         public bool IsDarkMode { get; set; }
+        public string LastUsedProfileName { get; set; } = string.Empty;
         public RealEsrganSettings RealEsrganSettings { get; set; } = new();
     }
 }
