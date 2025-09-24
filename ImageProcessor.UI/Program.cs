@@ -32,15 +32,18 @@ class Program
         services.AddSingleton<ImageProcessorService>();
         services.AddSingleton<ProcessingLogService>();
         services.AddSingleton<SettingsService>();
+        services.AddSingleton<ProfileService>();
 
         // ViewModels
         services.AddTransient<MainWindowViewModel>();
         services.AddTransient<SettingsViewModel>(); 
         services.AddTransient<LogViewModel>();
+        services.AddTransient<ProfilesViewModel>();
 
         // Views
         services.AddTransient<MainWindow>();
         services.AddTransient<SettingsView>();
         services.AddTransient<LogView>();
+        services.AddTransient<ProfilesView>();
     }
 }

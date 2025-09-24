@@ -89,17 +89,7 @@ public partial class MainWindow : Window
 
     private void OnLoaded(object? sender, EventArgs e)
     {
-        // We get the screen where the window is located.
-        var screen = Screens.ScreenFromVisual(this);
-        if (screen != null)
-        {
-            // Calculate the new Y position with a 40px margin from the top.
-            var newY = screen.WorkingArea.Y + 40;
-
-            // The window is already centered horizontally by WindowStartupLocation="CenterScreen"
-            // We just need to adjust the vertical position.
-            Position = new PixelPoint(Position.X, newY);
-        }
+  
     }
 
     private async void OnClosing(object? sender, WindowClosingEventArgs e)

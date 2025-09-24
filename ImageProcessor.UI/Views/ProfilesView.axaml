@@ -1,0 +1,35 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:ImageProcessor.UI.ViewModels"
+        x:Class="ImageProcessor.UI.Views.ProfilesView"
+        x:DataType="vm:ProfilesViewModel"
+        Title="Manage Profiles"
+        Width="400" Height="200"
+        WindowStartupLocation="CenterOwner"
+        CanResize="False">
+
+    <Design.DataContext>
+        <vm:ProfilesViewModel/>
+    </Design.DataContext>
+
+    <StackPanel Spacing="10" Margin="15">
+        <TextBlock Text="Select a profile to load or delete:"/>
+        
+        <Grid>
+             <ComboBox Name="ProfilesComboBox"
+                       ItemsSource="{Binding ProfileNames}" 
+                       SelectedItem="{Binding SelectedProfileName}"/>
+             <TextBlock Text="No profiles saved"
+                        IsHitTestVisible="False"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        IsVisible="{Binding !ProfileNames.Count}"/>
+        </Grid>
+
+        <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10" Margin="0,10,0,0">
+            <Button Grid.Column="0" Content="Load Profile" Command="{Binding LoadProfileCommand}" IsEnabled="{Binding SelectedProfileName, Converter={x:Static ObjectConverters.IsNotNull}}" Classes="Accent"/>
+            <Button Grid.Column="1" Content="Delete" Command="{Binding DeleteProfileCommand}" IsEnabled="{Binding SelectedProfileName, Converter={x:Static ObjectConverters.IsNotNull}}" Classes="destructive"/>
+            <Button Grid.Column="2" Content="Cancel" Command="{Binding CancelCommand}"/>
+        </Grid>
+    </StackPanel>
+</Window>

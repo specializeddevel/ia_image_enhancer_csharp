@@ -26,11 +26,13 @@ A cross-platform desktop application and web API for enhancing images using Real
 ## Table of Contents
 
 - [Features](#features)
+- [Profile Management](#profile-management)
 - [Solution Structure](#solution-structure)
 - [How it Works](#how-it-works)
 - [API Endpoints](#api-endpoints)
 - [Screenshots](#screenshots)
 - [Processing Options Explained](#processing-options-explained)
+- [Settings](#settings)
 - [Prerequisites and Downloads](#prerequisites-and-downloads)
 - [Required Files](#required-files)
 - [Getting Started](#getting-started)
@@ -41,27 +43,36 @@ A cross-platform desktop application and web API for enhancing images using Real
 
 ## Features
 
+- **Configuration Profiles:** Save and load entire processing configurations for repeatable workflows.
+- **Auto-Load Last Profile:** The application automatically loads your last-used profile on startup.
 - **AI-Powered Upscaling:** Enhance image resolution by 4x using state-of-the-art Real-ESRGAN models.
-- **Multiple AI Models:** Choose from a selection of pre-configured Real-ESRGAN models for different types of images (e.g., photos, anime).
-- **Modern Format Conversion:** Convert your images to high-efficiency formats like `.webp` and `.avif` to save disk space.
+- **Modern Format Conversion:** Convert images to high-efficiency formats like `.webp` and `.avif`.
 - **Batch Processing:** Process entire folders of images, including subfolders, in one go.
-- **Detailed Progress Display:** Track overall progress and per-folder progress with details on file counts and space savings.
-- **Same Folder Processing:** Option to save processed files in the same directory as the source files.
 - **Cross-Platform:** Runs on Windows, macOS, and Linux.
-- **User-Friendly GUI:** A simple and intuitive graphical interface built with Avalonia UI.
-- **Dynamic UI:** Controls are hidden during processing to provide a cleaner and more focused user experience.
-- **Web API:** A headless web API for programmatic access to the image processing functionality.
-- **Dark & Light Themes:** Switch between themes to match your preference.
-- **Optional Source File Deletion:** Automatically delete original files after processing to save space.
-- **Processing Log:** Keep track of all processed images, including details like original and processed sizes, and space savings.
+- **Dual Interface:** Use the simple and intuitive desktop GUI (built with Avalonia) or the headless Web API for programmatic access.
+- **Detailed Progress Display:** Track overall and per-folder progress with details on file counts and space savings.
+- **UI/UX Enhancements:**
+  - Drag and Drop support for selecting folders.
+  - Maximized window on startup for a better view.
+  - Dark & Light themes.
+  - Input validation and clear user feedback.
+- **Processing Log:** Keep track of all processed images.
+
+## Profile Management
+
+The application now supports saving your settings into named profiles.
+
+- **Saving a Profile:** Configure your desired settings (folders, model, options) on the main window. Type a name in the text box next to the "Save as Profile" button and click it. The button will be disabled if the name is empty.
+- **Loading and Deleting Profiles:** Click the "Profiles..." button at the top right to open the Profile Manager. From there, you can select a profile to either load its settings or delete it permanently.
 
 ## Solution Structure
 
-The solution is divided into three projects:
+The solution is divided into four projects:
 
 - **`ImageProcessor.Core`:** A .NET library project that contains the core logic for image processing. It orchestrates the command-line tools to perform image enhancement and conversion.
 - **`ImageProcessor.Api`:** An ASP.NET Core web API that exposes the image processing functionality as a web service.
 - **`ImageProcessor.UI`:** A desktop application built with Avalonia UI that provides a graphical user interface.
+- **`image-processor-web`:** A React-based web application that consumes the API.
 
 ## How it Works
 
@@ -128,6 +139,20 @@ The main window provides several options to customize the image processing workf
 | **Include .WebP Files**              | If checked, existing `.webp` files in the source folder will be included in the processing queue.                                      |
 | **Include .Avif Files**              | If checked, existing `.avif` files in the source folder will be included in the processing queue.                                      |
 | **Delete Source Files**              | **(Use with caution!)** If checked, the original source image will be permanently deleted after it has been successfully processed.      |
+
+> 💡 **Note**  
+> Conversion quality settings for WebP and AVIF can be found in the **Settings** window (click the ⚙️ icon).
+
+## Settings
+
+The settings window allows for more advanced configuration.
+
+| Setting                              | Description                                                                                                                            |
+| ------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------- |
+| **WebP Quality**                     | A slider (1-100) to control the quality of the WebP conversion. Higher values result in better quality and larger file sizes.            |
+| **AVIF Quality**                     | A slider (1-100) to control the quality of the AVIF conversion. Higher values result in better quality and larger file sizes.             |
+| **Real-ESRGAN Command Line Arguments** | Allows customization of the command-line arguments passed to the `realesrgan-ncnn-vulkan` executable for advanced users.                  |
+
 
 ## Prerequisites and Downloads
 >
@@ -207,7 +232,7 @@ This application relies on external command-line tools. These must be placed in 
 
 ### 2. Models Folder
 
-You must have a folder named `models` in the application's root directory. This folder must contain the `.bin` and `.param` files for the Real-ESRGAN models you intend to use.
+You must have a folder named `models` in the application\'s root directory. This folder must contain the `.bin` and `.param` files for the Real-ESRGAN models you intend to use.
 
 ## Getting Started
 
