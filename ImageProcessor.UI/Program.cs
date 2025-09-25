@@ -33,6 +33,7 @@ class Program
         services.AddSingleton<ProcessingLogService>();
         services.AddSingleton<SettingsService>();
         services.AddSingleton<ProfileService>();
+        services.AddSingleton<IThemeService, ThemeService>();
 
         // ViewModels
         services.AddTransient<MainWindowViewModel>();

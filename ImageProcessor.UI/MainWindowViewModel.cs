@@ -25,6 +25,7 @@ public partial class MainWindowViewModel : ObservableObject
     private readonly ProcessingLogService _logService;
     private readonly SettingsService _settingsService;
     private readonly ProfileService _profileService;
+    private readonly IThemeService _themeService;
     private readonly IServiceProvider _serviceProvider;
     private bool _isLoading;
 
@@ -173,13 +174,14 @@ public partial class MainWindowViewModel : ObservableObject
     [ObservableProperty]
     private bool _canProcess = true; // Default to true, assume dependencies are fine until checked
 
-    public MainWindowViewModel(ImageProcessorService processorService, ProcessingLogService logService, SettingsService settingsService, ProfileService profileService, IServiceProvider serviceProvider)
+    public MainWindowViewModel(ImageProcessorService processorService, ProcessingLogService logService, SettingsService settingsService, ProfileService profileService, IThemeService themeService, IServiceProvider serviceProvider)
     {
         _isLoading = true;
         _processorService = processorService;
         _logService = logService;
         _settingsService = settingsService;
         _profileService = profileService;
+        _themeService = themeService;
         _serviceProvider = serviceProvider;
 
         // Populate Models from ImageProcessorService
@@ -195,11 +197,6 @@ public partial class MainWindowViewModel : ObservableObject
         else if (!Models.Any())
         {
             SelectedModel = string.Empty; // No models available
-        }
-
-        if (Application.Current != null)
-        {
-            ThemeManager.SetTheme(IsDarkMode ? ThemeVariant.Dark : ThemeVariant.Light);
         }
 
         CheckForMissingDependencies();
@@ -358,10 +355,7 @@ public partial class MainWindowViewModel : ObservableObject
 
     partial void OnIsDarkModeChanged(bool value)
     {
-        var theme = value ? ThemeVariant.Dark : ThemeVariant.Light;
-        ThemeManager.SetTheme(theme);
-        ThemeManager.SaveTheme(theme);
-        SaveSettings();
+        _themeService.SetTheme(value);
     }
 
     [RelayCommand]
