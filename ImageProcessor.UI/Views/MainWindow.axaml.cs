@@ -48,7 +48,7 @@ public partial class MainWindow : Window
         if (e.Data.Contains(DataFormats.Files))
         {
             e.DragEffects = DragDropEffects.Copy;
-            DropTargetBorder.BorderBrush = Brushes.DodgerBlue; // Visual feedback
+            DropTargetBorder.Background = new SolidColorBrush(Colors.DodgerBlue, 0.2); // Visual feedback
         }
         else
         {
@@ -58,12 +58,12 @@ public partial class MainWindow : Window
 
     private void OnDragLeave(object? sender, DragEventArgs e)
     {
-        DropTargetBorder.BorderBrush = Brushes.Transparent; // Reset visual feedback
+        DropTargetBorder.Background = Brushes.Transparent; // Reset visual feedback
     }
 
     private void OnDrop(object? sender, DragEventArgs e)
     {
-        DropTargetBorder.BorderBrush = Brushes.Transparent; // Reset visual feedback
+        DropTargetBorder.Background = Brushes.Transparent; // Reset visual feedback
 
         if (e.Data.GetFiles() is { } files && files.Any())
         {
