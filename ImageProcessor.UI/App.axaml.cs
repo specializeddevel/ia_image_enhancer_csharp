@@ -35,7 +35,8 @@ public partial class App : Application
     {
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            ThemeManager.LoadTheme();
+            var themeService = Services.GetRequiredService<IThemeService>();
+            themeService.InitializeTheme();
 
             desktop.MainWindow = Services.GetRequiredService<MainWindow>();
         }
